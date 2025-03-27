@@ -1,0 +1,75 @@
+[
+    {
+      "name": "Blue",
+      "hex": "#2A6AF2"
+    },
+    {
+      "name": "Muted Purple",
+      "hex": "#8D7EAA"
+    },
+    {
+      "name": "Bright Red",
+      "hex": "#F13624"
+    },
+    {
+      "name": "Orange-Red",
+      "hex": "#FB5334"
+    },
+    {
+      "name": "Bright Orange",
+      "hex": "#FBAA1E"
+    },
+    {
+      "name": "Golden Yellow",
+      "hex": "#F2BB53"
+    },
+    {
+      "name": "Deep Navy Blue",
+      "hex": "#273373"
+    },
+    {
+      "name": "Brown",
+      "hex": "#764514"
+    },
+    {
+      "name": "Warm Brown",
+      "hex": "#B27734"
+    },
+    {
+      "name": "Dark Teal",
+      "hex": "#094D3C"
+    },
+    {
+      "name": "Muted Teal",
+      "hex": "#4B6561"
+    },
+    {
+      "name": "Muted Green",
+      "hex": "#4C7950"
+    },
+    {
+      "name": "Soft Mint",
+      "hex": "#A9C9BD"
+    },
+    {
+      "name": "Grayish Green",
+      "hex": "#A3ABA2"
+    },
+    {
+      "name": "Light Gray-Blue",
+      "hex": "#D6DBEA"
+    },
+    {
+      "name": "Peach",
+      "hex": "#FBAD8B"
+    },
+    {
+      "name": "Pink",
+      "hex": "#FBB0AD"
+    },
+    {
+      "name": "Muted Mauve",
+      "hex": "#CFBABB"
+    }
+  ]
+  
