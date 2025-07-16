@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiss Poster Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="controls">
+        <button id="reload-btn" class="reload-button">GENERATE</button>
+        <label class="grid-toggle">
+            <input type="checkbox" id="grid-toggle" />
+            <span>Grid View</span>
+        </label>
+        
+        <div class="content-dropdown">
+            <button id="content-toggle" class="content-toggle">Content Editor</button>
+            <div class="content-panel" id="content-panel">
+                <div class="content-field">
+                    <label for="custom-title">Title:</label>
+                    <input type="text" id="custom-title" placeholder="Leave empty for random content">
+                </div>
+                <div class="content-field">
+                    <label for="custom-subtitle">Subtitle:</label>
+                    <input type="text" id="custom-subtitle" placeholder="Leave empty for random content">
+                </div>
+                <div class="content-field">
+                    <label for="custom-body">Body Text:</label>
+                    <textarea id="custom-body" placeholder="Leave empty for random content"></textarea>
+                </div>
+                <div class="content-field">
+                    <label for="custom-credits">Credits:</label>
+                    <input type="text" id="custom-credits" placeholder="e.g. Design: Studio Basel">
+                </div>
+                <div class="content-field">
+                    <label for="custom-date">Date:</label>
+                    <input type="text" id="custom-date" placeholder="e.g. 1972 or April 1973">
+                </div>
+                <div class="content-field">
+                    <label for="custom-venue">Venue:</label>
+                    <input type="text" id="custom-venue" placeholder="e.g. Kunsthalle Basel">
+                </div>
+                <div class="content-field">
+                    <label for="custom-copyright">Copyright:</label>
+                    <input type="text" id="custom-copyright" placeholder="e.g. © 1972 Basel">
+                </div>
+                <button id="apply-content" class="apply-button">Apply Content</button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="canvas-container">
+        <div class="poster-grid" id="poster-grid">
+            <!-- 64 poster containers will be generated here -->
+        </div>
+        
+        <!-- Status bar for export functionality -->
+        <div class="status-bar" id="status-bar">
+            <div class="status-info">
+                <span id="selection-status">Click a poster to select</span>
+            </div>
+            <div class="export-controls" id="export-controls">
+                <select id="export-format">
+                    <option value="svg">SVG</option>
+                    <option value="figma">Figma</option>
+                    <option value="png">PNG</option>
+                </select>
+                <button id="export-btn" disabled>Export</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="poster-generator.js"></script>
+    <script src="export-handler.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

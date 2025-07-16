@@ -1,0 +1,26 @@
+{
+  "name": "swiss-poster-generator",
+  "version": "1.0.0",
+  "description": "A web application that generates Swiss-style poster designs with random images and procedural layouts",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=8000 --open=/index.html",
+    "dev": "live-server --port=8000 --open=/index.html --watch=*.html,*.css,*.js",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "swiss-design",
+    "poster",
+    "generator",
+    "design",
+    "web-app"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 

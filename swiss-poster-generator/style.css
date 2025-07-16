@@ -1,0 +1,1110 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fefefe;
+    background-image: 
+        linear-gradient(to right, #e8f2ff 0px, transparent 1px),
+        linear-gradient(to bottom, #e8f2ff 0px, transparent 1px);
+    background-size: 20px 20px;
+    color: #000000;
+    line-height: 1.4;
+    overflow-x: hidden;
+}
+
+/* Header controls */
+.controls {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 250, 250, 0.95) 100%);
+    padding: 15px 25px;
+    border: 1px solid #000000;
+    border-radius: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
+    max-width: 90vw;
+    flex-wrap: wrap;
+}
+
+.reload-button {
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.reload-button:hover {
+    background: linear-gradient(135deg, #cc6660 0%, #b55550 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.grid-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.grid-toggle:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.grid-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #cc6660;
+}
+
+/* Content dropdown */
+.content-dropdown {
+    position: relative;
+}
+
+.content-toggle {
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.content-toggle:hover {
+    background: linear-gradient(135deg, #cc6660 0%, #b55550 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.content-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    border: 2px solid #000000;
+    border-radius: 2px;
+    padding: 20px;
+    min-width: 300px;
+    display: none;
+    z-index: 1001;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content-panel.active {
+    display: block;
+}
+
+.content-field {
+    margin-bottom: 15px;
+}
+
+.content-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: #000000;
+}
+
+.content-field input,
+.content-field textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #000000;
+    background: #ffffff;
+    font-size: 14px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.content-field textarea {
+    height: 80px;
+    resize: vertical;
+}
+
+.content-field input:focus,
+.content-field textarea:focus {
+    outline: none;
+    border-color: #cc6660;
+}
+
+.apply-button {
+    background: linear-gradient(135deg, #cc6660 0%, #b55550 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.apply-button:hover {
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Main canvas container */
+.canvas-container {
+    padding: 120px 20px 20px; /* No bottom padding needed since status bar is hidden */
+    min-height: 100vh;
+}
+
+/* Poster grid */
+.poster-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, auto);
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+/* Individual poster container */
+.poster {
+    position: relative;
+    background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+    border: 1px solid #cccccc;
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        0 2px 4px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: box-shadow 0.2s ease;
+}
+
+/* Colored background variations */
+.poster.bg-black {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+}
+
+.poster.bg-red {
+    background: linear-gradient(135deg, #cc6660 0%, #b55550 100%);
+}
+
+.poster.bg-dark-gray {
+    background: linear-gradient(135deg, #333333 0%, #555555 100%);
+}
+
+.poster.bg-tinted {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+}
+
+/* White/reversed text for colored backgrounds */
+.poster.bg-black .poster-title,
+.poster.bg-black .poster-subtitle,
+.poster.bg-black .poster-body {
+    color: #ffffff;
+}
+
+.poster.bg-red .poster-title,
+.poster.bg-red .poster-subtitle,
+.poster.bg-red .poster-body {
+    color: #ffffff;
+}
+
+.poster.bg-dark-gray .poster-title,
+.poster.bg-dark-gray .poster-subtitle,
+.poster.bg-dark-gray .poster-body {
+    color: #ffffff;
+}
+
+/* Typography spacing variations */
+.poster-title.spacing-tight {
+    letter-spacing: -1px;
+    line-height: 0.9;
+}
+
+.poster-title.spacing-normal {
+    letter-spacing: 0px;
+    line-height: 1.1;
+}
+
+.poster-title.spacing-loose {
+    letter-spacing: 3px;
+    line-height: 1.3;
+}
+
+.poster-title.spacing-extreme {
+    letter-spacing: 8px;
+    line-height: 0.8;
+}
+
+.poster-subtitle.spacing-tight {
+    letter-spacing: 0px;
+    line-height: 1.2;
+}
+
+.poster-subtitle.spacing-normal {
+    letter-spacing: 1px;
+    line-height: 1.4;
+}
+
+.poster-subtitle.spacing-loose {
+    letter-spacing: 3px;
+    line-height: 1.6;
+}
+
+.poster-body.spacing-tight {
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.poster-body.spacing-normal {
+    line-height: 1.3;
+    letter-spacing: 0px;
+}
+
+.poster-body.spacing-loose {
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+}
+
+/* Standard letter format (8.5x11) */
+.poster.format-letter {
+    aspect-ratio: 8.5/11;
+}
+
+/* Double spread format (11x17) */
+.poster.format-spread {
+    aspect-ratio: 11/17;
+}
+
+.poster:hover {
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.12),
+        0 4px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.poster.show-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(to right, #cc6660 0px, transparent 1px),
+        linear-gradient(to bottom, #cc6660 0px, transparent 1px),
+        linear-gradient(to right, #0000ff 0px, transparent 1px),
+        linear-gradient(to bottom, #0000ff 0px, transparent 1px);
+    background-size: 20px 20px, 20px 20px, 60px 60px, 60px 60px;
+    background-position: 0 0, 0 0, 0 0, 0 0;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Poster content */
+.poster-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.poster-image {
+    width: 100%;
+    height: 50%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.2);
+    mix-blend-mode: multiply;
+}
+
+/* 1970s texture and tinting effects */
+.poster-image.texture-grain {
+    filter: grayscale(100%) contrast(1.4) sepia(0.2) saturate(1.2);
+    mix-blend-mode: multiply;
+}
+
+.poster-image.texture-contrast {
+    filter: grayscale(100%) contrast(1.8) brightness(0.9);
+    mix-blend-mode: hard-light;
+}
+
+.poster-image.texture-vintage {
+    filter: grayscale(100%) contrast(1.3) sepia(0.3) hue-rotate(10deg);
+    mix-blend-mode: overlay;
+}
+
+.poster-image.tint-red-light {
+    filter: grayscale(100%) contrast(1.2) sepia(0.4) hue-rotate(320deg) saturate(1.5);
+    mix-blend-mode: multiply;
+    opacity: 0.8;
+}
+
+.poster-image.tint-red-medium {
+    filter: grayscale(100%) contrast(1.3) sepia(0.6) hue-rotate(320deg) saturate(2);
+    mix-blend-mode: multiply;
+    opacity: 0.7;
+}
+
+.poster-image.tint-red-heavy {
+    filter: grayscale(100%) contrast(1.4) sepia(0.8) hue-rotate(320deg) saturate(2.5);
+    mix-blend-mode: multiply;
+    opacity: 0.6;
+}
+
+.poster-image.texture-multiply {
+    filter: grayscale(100%) contrast(1.6) brightness(0.8);
+    mix-blend-mode: multiply;
+}
+
+.poster-image.texture-overlay {
+    filter: grayscale(100%) contrast(1.5) brightness(1.1);
+    mix-blend-mode: overlay;
+    opacity: 0.8;
+}
+
+.poster-text {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.poster-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    color: #000000;
+}
+
+.poster-subtitle {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #cc6660;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 200;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.poster-body {
+    font-size: 10px;
+    line-height: 1.3;
+    color: #000000;
+    flex: 1;
+    position: relative;
+    z-index: 200;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.poster-accent {
+    width: 100%;
+    height: 4px;
+    background: #cc6660;
+    margin-top: 10px;
+}
+
+/* Meta elements - visually minimized, highest z-index */
+.poster-credits,
+.poster-date,
+.poster-venue,
+.poster-copyright {
+    position: absolute;
+    font-size: 0.5rem;
+    color: #666666;
+    z-index: 200;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    max-width: 100px;
+    word-wrap: break-word;
+}
+
+.poster-credits {
+    bottom: 10px;
+    right: 10px;
+    text-align: right;
+}
+
+.poster-date {
+    top: 10px;
+    right: 10px;
+    transform: rotate(90deg);
+    transform-origin: top right;
+    text-align: right;
+}
+
+.poster-venue {
+    bottom: 10px;
+    left: 10px;
+    transform: rotate(-90deg);
+    transform-origin: bottom left;
+    text-align: left;
+}
+
+.poster-copyright {
+    top: 10px;
+    left: 10px;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+}
+
+/* Layout type variations */
+.layout-type-dominant .poster-text {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.layout-type-dominant .poster-title {
+    font-size: 3.5rem;
+    line-height: 0.9;
+    margin-bottom: 2rem;
+    font-weight: 900;
+}
+
+.layout-grid-break .poster-text {
+    position: relative;
+    height: 100%;
+}
+
+.layout-grid-break .poster-title {
+    transform: rotate(-5deg);
+    font-size: 2.5rem;
+    position: relative;
+    left: 10%;
+    margin-bottom: 3rem;
+}
+
+.layout-large-type .poster-text {
+    position: relative;
+    z-index: 2;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.layout-large-type .poster-title {
+    font-size: 4rem;
+    line-height: 0.8;
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+.layout-asymmetrical .poster-content {
+    flex-direction: row;
+}
+
+.layout-asymmetrical .poster-text {
+    width: 60%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.layout-asymmetrical .side-image {
+    width: 40%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Grid breaking effects */
+.break-grid .poster-title {
+    position: relative;
+    z-index: 150;
+}
+
+.break-grid .poster-text {
+    position: relative;
+}
+
+/* Background graphics */
+.background-graphic {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    opacity: 0.1;
+    z-index: 1;
+}
+
+/* Type size variations - EXTREME EDITION with dynamic weights and tracking */
+.poster-title.size-tiny { 
+    font-size: 0.6rem; 
+    letter-spacing: 0.3em; /* Way out for tiny */
+}
+.poster-title.size-small { 
+    font-size: 1.2rem; 
+    letter-spacing: 0.2em; /* Out for small */
+}
+.poster-title.size-medium { 
+    font-size: 1.8rem; 
+    letter-spacing: 0.1em; /* Slightly out for medium */
+}
+.poster-title.size-large { 
+    font-size: 2.4rem; 
+    letter-spacing: -0.05em; /* Slightly in for large */
+}
+.poster-title.size-xl { 
+    font-size: 3.2rem; 
+    letter-spacing: -0.1em; /* In for xl */
+}
+.poster-title.size-massive { 
+    font-size: 4.5rem; 
+    line-height: 0.8;
+    letter-spacing: -0.15em; /* Way in for massive */
+}
+.poster-title.size-gigantic { 
+    font-size: 8rem; 
+    line-height: 0.7;
+    letter-spacing: -0.2em; /* Extremely in for gigantic */
+}
+.poster-title.size-colossal { 
+    font-size: 12rem; 
+    line-height: 0.6;
+    letter-spacing: -0.25em; /* Insanely in for colossal */
+}
+.poster-title.size-full-width { 
+    font-size: 15rem; 
+    line-height: 0.5;
+    letter-spacing: -0.3em; /* Ridiculously in for full-width */
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Subtitle sizing - Always fits within grid, highest z-index */
+.poster-subtitle.size-tiny { font-size: 0.5rem; }
+.poster-subtitle.size-small { font-size: 0.8rem; }
+.poster-subtitle.size-medium { font-size: 1.0rem; }
+.poster-subtitle.size-large { font-size: 1.4rem; }
+.poster-subtitle.size-xl { font-size: 2.0rem; }
+.poster-subtitle.size-massive { 
+    font-size: 2.5rem; 
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+/* Body copy sizing - Limited to prevent getting too big */
+.poster-body.size-tiny { font-size: 0.4rem; }
+.poster-body.size-small { font-size: 0.6rem; }
+.poster-body.size-medium { font-size: 0.8rem; }
+.poster-body.size-large { font-size: 0.9rem; }
+
+/* Special handling for extreme sizes */
+.poster-title.size-gigantic,
+.poster-title.size-colossal,
+.poster-title.size-full-width {
+    position: relative;
+    z-index: 50;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+.poster-title.size-full-width {
+    font-size: clamp(8rem, 20vw, 15rem);
+    transform: scale(1.2);
+    transform-origin: center center;
+}
+
+/* Geometric shapes */
+.geometric-shape {
+    position: relative;
+}
+
+.geometric-shape.square {
+    background: #000000;
+}
+
+.geometric-shape.rectangle {
+    background: #000000;
+}
+
+.geometric-shape.triangle {
+    width: 0;
+    height: 0;
+    border-left: 50% solid transparent;
+    border-right: 50% solid transparent;
+    border-bottom: 100% solid #000000;
+}
+
+.geometric-shape.circle {
+    background: #000000;
+    border-radius: 50%;
+}
+
+/* Bold layout types */
+.layout-geometric-dominant .poster-content {
+    position: relative;
+    overflow: visible;
+}
+
+.layout-geometric-dominant .poster-text {
+    position: absolute;
+    bottom: 20%;
+    left: 5%;
+    right: 5%;
+    z-index: 200;
+    text-align: center;
+}
+
+.layout-massive-type-geometric .poster-content {
+    position: relative;
+    overflow: visible;
+}
+
+.layout-massive-type-geometric .poster-title {
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 0.8;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+}
+
+.layout-split-screen-bold .poster-content {
+    display: flex;
+    height: 100%;
+}
+
+.layout-diagonal-chaos .poster-content {
+    position: relative;
+    overflow: visible;
+}
+
+.layout-diagonal-chaos .poster-title {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    transform: rotate(-15deg);
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 0.8;
+    z-index: 150;
+}
+
+.layout-diagonal-chaos .poster-subtitle {
+    position: absolute;
+    bottom: 30%;
+    right: 10%;
+    transform: rotate(5deg);
+    font-size: 1.5rem;
+    z-index: 200;
+}
+
+/* Red element variations - using nice, slightly beige red */
+.poster-title.red-element { color: #cc6660; }
+.poster-subtitle.red-element { color: #cc6660; }
+.poster-accent.red-element { background: #cc6660; }
+
+/* Special accent positions */
+.poster-accent.vertical {
+    width: 8px;
+    height: 60%;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.poster-accent.diagonal {
+    transform: rotate(45deg);
+    width: 100px;
+    height: 8px;
+    position: absolute;
+    top: 30%;
+    right: 10%;
+}
+
+/* Type-only layouts */
+.poster-text.type-dominant {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+.poster-text.grid-break {
+    position: relative;
+    height: 100%;
+}
+
+.poster-text.large-type {
+    position: relative;
+    z-index: 2;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+.poster-text.asymmetrical {
+    width: 60%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Enhanced typography for larger displays */
+@media (min-width: 1400px) {
+    .layout-type-dominant .poster-title {
+        font-size: 4rem;
+    }
+    
+    .layout-large-type .poster-title {
+        font-size: 5rem;
+    }
+    
+    .layout-grid-break .poster-title {
+        font-size: 3rem;
+    }
+}
+
+/* Status bar for export functionality */
+.status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 250, 250, 0.95) 100%);
+    border-top: 1px solid #000000;
+    padding: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.status-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-info span {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000000;
+}
+
+.export-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.export-controls select {
+    padding: 10px 15px;
+    border: 1px solid #000000;
+    border-radius: 2px;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    font-size: 14px;
+    text-transform: uppercase;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.export-controls button {
+    background: linear-gradient(135deg, #cc6660 0%, #b55550 100%);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.export-controls button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.export-controls button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Poster selection state */
+.poster-container.selected {
+    border: 2px solid #cc6660;
+    box-shadow: 0 4px 8px rgba(204, 102, 96, 0.3);
+}
+
+.poster-container.selected:hover {
+    border-color: #cc6660;
+    box-shadow: 0 6px 12px rgba(204, 102, 96, 0.4);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .poster-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(8, auto);
+        gap: 15px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .content-panel {
+        min-width: 280px;
+        left: 0;
+        right: 0;
+    }
+    
+    .status-bar {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+        padding: 15px;
+    }
+    
+    .status-info {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .export-controls {
+        justify-content: center;
+    }
+    
+    .export-controls select {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    .export-controls button {
+        flex: 1;
+    }
+    
+    /* Scale down typography for mobile */
+    .layout-type-dominant .poster-title {
+        font-size: 2.5rem;
+    }
+    
+    .layout-large-type .poster-title {
+        font-size: 3rem;
+    }
+    
+    .layout-grid-break .poster-title {
+        font-size: 2rem;
+        left: 5%;
+    }
+    
+    .layout-asymmetrical .poster-content {
+        flex-direction: column;
+    }
+    
+    .layout-asymmetrical .poster-text {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .layout-asymmetrical .side-image {
+        width: 100%;
+        height: 40%;
+    }
+    
+    /* Bold layout mobile scaling */
+    .layout-geometric-dominant .poster-title {
+        font-size: 2.5rem;
+    }
+    
+    .layout-massive-type-geometric .poster-title {
+        font-size: 3.5rem;
+    }
+    
+    .layout-split-screen-bold .poster-content {
+        flex-direction: column;
+    }
+    
+    .layout-diagonal-chaos .poster-title {
+        font-size: 3rem;
+        transform: rotate(-10deg);
+    }
+    
+    .layout-diagonal-chaos .poster-subtitle {
+        font-size: 1.2rem;
+        transform: rotate(3deg);
+    }
+    
+    /* EXTREME type sizes mobile scaling */
+    .poster-title.size-gigantic {
+        font-size: 4rem !important;
+    }
+    
+    .poster-title.size-colossal {
+        font-size: 5rem !important;
+    }
+    
+    .poster-title.size-full-width {
+        font-size: clamp(3rem, 15vw, 6rem) !important;
+    }
+    
+    .poster-subtitle.size-massive {
+        font-size: 1.5rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .poster-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(16, auto);
+        gap: 10px;
+    }
+    
+    /* Further scale down for small screens */
+    .layout-type-dominant .poster-title {
+        font-size: 2rem;
+    }
+    
+    .layout-large-type .poster-title {
+        font-size: 2.5rem;
+    }
+    
+    .layout-grid-break .poster-title {
+        font-size: 1.5rem;
+        transform: rotate(-3deg);
+        left: 3%;
+    }
+    
+    .poster-text {
+        padding: 10px;
+    }
+    
+    .layout-asymmetrical .poster-text {
+        padding: 10px;
+    }
+    
+    /* Bold layout small screen scaling */
+    .layout-geometric-dominant .poster-title {
+        font-size: 2rem;
+    }
+    
+    .layout-massive-type-geometric .poster-title {
+        font-size: 2.5rem;
+    }
+    
+    .layout-diagonal-chaos .poster-title {
+        font-size: 2rem;
+        transform: rotate(-8deg);
+    }
+    
+    .layout-diagonal-chaos .poster-subtitle {
+        font-size: 1rem;
+        transform: rotate(2deg);
+    }
+    
+    .content-panel {
+        min-width: 250px;
+        padding: 15px;
+    }
+    
+    /* Export menu adjustments for small screens */
+    .export-menu {
+        min-width: 150px;
+        padding: 15px;
+        font-size: 12px;
+    }
+    
+    .export-menu select {
+        font-size: 12px;
+        padding: 8px;
+    }
+    
+    .export-menu button {
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+    
+    /* EXTREME type sizes small screen scaling */
+    .poster-title.size-tiny {
+        font-size: 0.8rem !important; /* Don't make it too small to read */
+    }
+    
+    .poster-title.size-gigantic {
+        font-size: 3rem !important;
+    }
+    
+    .poster-title.size-colossal {
+        font-size: 4rem !important;
+    }
+    
+    .poster-title.size-full-width {
+        font-size: clamp(2rem, 12vw, 5rem) !important;
+    }
+    
+    .poster-subtitle.size-tiny {
+        font-size: 0.6rem !important; /* Don't make it too small to read */
+    }
+    
+    .poster-subtitle.size-massive {
+        font-size: 1.2rem !important;
+    }
+    
+    .poster-body.size-tiny {
+        font-size: 0.5rem !important; /* Don't make it too small to read */
+    }
+} 

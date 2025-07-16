@@ -1,0 +1,4 @@
+- it's bad at making a STOP GENERATING button
+- the fractal generation keeps wanting to make matematical fractals... and it doesnt really do the geometry I asked it for.
+- it's also kind of pixelated
+- this is hard to export, I think it really needs to be screengrabbed

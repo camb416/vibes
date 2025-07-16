@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Quilt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Monaco', monospace;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #000;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            border-right: 1px solid #333;
+        }
+
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .emoji-grid {
+            width: 1920px;
+            height: 1080px;
+            display: grid;
+            gap: 2px;
+            padding: 20px;
+            place-items: center;
+            background: #fff;
+            border: 1px solid #333;
+            box-sizing: border-box;
+        }
+
+                         .emoji-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .emoji-cell:hover {
+            transform: scale(1.2);
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-align: left;
+            font-weight: normal;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            background: #000;
+            border: 1px solid #333;
+            color: #fff;
+            font-size: 12px;
+            font-weight: normal;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .control-btn:hover {
+            background: #333;
+            border-color: #666;
+        }
+
+        .lucky-btn {
+            background: #fff;
+            color: #000;
+            border: 1px solid #333;
+        }
+
+        .lucky-btn:hover {
+            background: #eee;
+        }
+
+        .settings-panel {
+            background: #000;
+            border: 1px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .settings-title {
+            font-size: 14px;
+            font-weight: normal;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .setting-item {
+            margin-bottom: 20px;
+        }
+
+        .setting-label {
+            font-size: 12px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .setting-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .setting-slider {
+            flex: 1;
+            height: 2px;
+            background: #333;
+            outline: none;
+            appearance: none;
+        }
+
+        .setting-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+        .setting-number {
+            width: 60px;
+            padding: 4px 6px;
+            background: #000;
+            border: 1px solid #333;
+            color: #fff;
+            font-size: 12px;
+            font-family: inherit;
+            text-align: center;
+        }
+
+        .setting-number:focus {
+            outline: 1px solid #666;
+        }
+
+        .info {
+            border: 1px solid #333;
+            padding: 15px;
+            background: #000;
+        }
+
+        .info p {
+            font-size: 11px;
+            color: #ccc;
+            margin: 0;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+        <div class="app-container">
+        <div class="sidebar">
+            <h2>emoji-quilt</h2>
+            
+            <div class="controls">
+                <button class="control-btn" id="pauseBtn">pause</button>
+                <button class="control-btn lucky-btn" id="luckyBtn">lucky</button>
+                <button class="control-btn" id="debugBtn">debug</button>
+            </div>
+            
+            <div class="settings-panel" id="settingsPanel">
+                <div class="settings-title">settings</div>
+                <div class="setting-item">
+                    <div class="setting-label">grid rows</div>
+                    <div class="setting-controls">
+                        <input type="range" class="setting-slider" id="gridRows" min="5" max="25" value="10">
+                        <input type="number" class="setting-number" id="gridRowsNum" min="5" max="25" value="10">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">grid cols</div>
+                    <div class="setting-controls">
+                        <input type="range" class="setting-slider" id="gridCols" min="5" max="25" value="10">
+                        <input type="number" class="setting-number" id="gridColsNum" min="5" max="25" value="10">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">cell size</div>
+                    <div class="setting-controls">
+                        <input type="range" class="setting-slider" id="cellSize" min="12" max="72" value="48">
+                        <input type="number" class="setting-number" id="cellSizeNum" min="12" max="72" value="48">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">noise speed</div>
+                    <div class="setting-controls">
+                        <input type="range" class="setting-slider" id="noiseSpeed" min="0" max="0.001" step="0.00001" value="0">
+                        <input type="number" class="setting-number" id="noiseSpeedNum" min="0.01" max="1" step="0.01" value="0.1">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">noise scale</div>
+                    <div class="setting-controls">
+                        <input type="range" class="setting-slider" id="noiseScale" min="0.005" max="0.05" step="0.005" value="0.02">
+                        <input type="number" class="setting-number" id="noiseScaleNum" min="0.005" max="0.05" step="0.005" value="0.02">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info">
+                <p>
+                    canvas: 1920 × 1080<br>
+                    shortcuts:<br>
+                    space - play/pause<br>
+                    l - lucky<br>
+                    f - fullscreen
+                </p>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <div class="emoji-grid" id="emojiGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        // Emoji Quilt Application
+        class EmojiQuilt {
+            constructor() {
+                this.grid = document.getElementById('emojiGrid');
+                this.isAnimating = true;
+                this.time = 0;
+                this.gridRows = 10;
+                this.gridCols = 10;
+                this.cellSize = 48;
+                this.noiseSpeed = 0.0001;
+                this.noiseScale = 0.02;
+                this.zOffset = 0;
+                
+                // Emoji sets for different themes
+                this.emojiSets = {
+                    nature: ['🌸', '🌺', '🌻', '🌷', '🌹', '🌿', '🍀', '🌱', '🌳', '🌲', '🍃', '🌾'],
+                    space: ['⭐', '🌟', '✨', '💫', '🌙', '☄️', '🪐', '🌌', '🔮', '🎆', '🎇', '💥'],
+                    ocean: ['🌊', '🐠', '🐟', '🦀', '🐙', '🦑', '🐚', '🦐', '🐡', '🦈', '🐳', '🐋'],
+                    food: ['🍎', '🍊', '🍋', '🍌', '🍇', '🍓', '🫐', '🍑', '🥝', '🍍', '🥭', '🍒'],
+                    hearts: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💕', '💖', '💗'],
+                    faces: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉'],
+                    animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮'],
+                    weather: ['☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌩️', '❄️', '☃️', '⛄']
+                };
+                
+                this.currentEmojiSet = this.emojiSets.nature;
+                this.debugMode = false;
+                this.initializeGrid();
+                this.setupEventListeners();
+                this.animate();
+            }
+            
+            // Simple noise function (Perlin-like)
+            noise(x, y, z) {
+                // Simple pseudo-random noise function
+                let n = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453;
+                return (n - Math.floor(n)) * 2 - 1;
+            }
+            
+            // 3D noise field
+            noise3D(x, y, z) {
+                // Octave noise for more interesting patterns (smoothed)
+                let value = 0;
+                let amplitude = 1;
+                let frequency = 1;
+                
+                for (let i = 0; i < 3; i++) {
+                    value += this.noise(x * frequency, y * frequency, z * frequency) * amplitude;
+                    amplitude *= 0.6;
+                    frequency *= 1.5;
+                }
+                
+                // Smooth the result
+                return value * 0.5;
+            }
+            
+            initializeGrid() {
+                this.grid.innerHTML = '';
+                this.grid.style.gridTemplateColumns = `repeat(${this.gridCols}, 1fr)`;
+                this.grid.style.gridTemplateRows = `repeat(${this.gridRows}, 1fr)`;
+                
+                // Calculate appropriate font size based on available space or use cell size setting
+                // Grid area: 1880x1040 (1920x1080 minus 20px padding on each side)
+                // Account for gaps: (gridCols-1) * 2px gap and (gridRows-1) * 2px gap
+                const availableWidth = 1880 - (this.gridCols - 1) * 2;
+                const availableHeight = 1040 - (this.gridRows - 1) * 2;
+                const cellWidth = availableWidth / this.gridCols;
+                const cellHeight = availableHeight / this.gridRows;
+                
+                // Use smaller dimension and scale down to ensure emojis fit, but respect cell size setting
+                const baseFontSize = Math.min(cellWidth, cellHeight) * 0.6;
+                const autoFontSize = Math.max(12, Math.min(72, baseFontSize));
+                const fontSize = Math.min(this.cellSize, autoFontSize);
+                
+                this.cells = [];
+                
+                // Generate emoji assignments once when grid is created
+                for (let i = 0; i < this.gridRows * this.gridCols; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'emoji-cell';
+                    
+                    if (this.debugMode) {
+                        // Debug mode: use small font for numbers
+                        cell.style.fontSize = '12px';
+                        cell.style.color = '#000';
+                        cell.textContent = '0';
+                    } else {
+                        // Normal mode: use calculated font size for emojis
+                        cell.style.fontSize = `${fontSize}px`;
+                        cell.style.color = '';
+                        
+                        // Assign a random emoji from the current set
+                        const randomEmojiIndex = Math.floor(Math.random() * this.currentEmojiSet.length);
+                        cell.textContent = this.currentEmojiSet[randomEmojiIndex];
+                    }
+                    
+                    this.grid.appendChild(cell);
+                    this.cells.push(cell);
+                }
+                
+                this.updateGrid();
+            }
+            
+                        updateGrid() {
+                const centerX = this.gridCols / 2;
+                const centerY = this.gridRows / 2;
+                
+                for (let y = 0; y < this.gridRows; y++) {
+                    for (let x = 0; x < this.gridCols; x++) {
+                        const index = y * this.gridCols + x;
+                        const cell = this.cells[index];
+                        
+                        // Generate noise value for this position
+                        const noiseValue = this.noise3D(
+                            x * (this.noiseScale/100),
+                            y * (this.noiseScale/100),
+                            this.zOffset
+                        );
+                        
+                        // Debug mode: show noise values instead of emojis
+                        if (this.debugMode) {
+                            // Map noise value from -1,1 to 0-100
+                            const debugValue = Math.floor((noiseValue + 1) * 50);
+                            cell.textContent = debugValue.toString();
+                            cell.style.fontSize = '12px';
+                            cell.style.color = '#000';
+                            cell.style.transform = 'scale(1)';
+                            cell.style.opacity = '1';
+                        } else {
+                            // Normal mode: emoji assignments stay the same - only visual properties change
+                            
+                            // Organic shape changes based on distance from center and noise
+                            const distanceFromCenter = Math.sqrt(
+                                Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+                            );
+                            
+                            const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+                            const normalizedDistance = distanceFromCenter / maxDistance;
+                            
+                            // Scale and opacity based on noise and distance (reduced intensity)
+                            const scale = 0.5 + (noiseValue + 1) * 1.0;
+                            const opacity = 0.5 + (1 - normalizedDistance) * 0.4 + noiseValue * 0.1;
+                            
+                            cell.style.transform = `scale(${scale})`;
+                            cell.style.opacity = Math.max(0.2, Math.min(1, opacity));
+                            
+                            // Add some rotation for organic feel (reduced intensity)
+                            const rotation = noiseValue * 15;
+                            cell.style.transform += ` rotate(${rotation}deg)`;
+                        }
+                    }
+                }
+            }
+            
+                                     animate() {
+                if (!this.isAnimating) return;
+                
+                this.time += 0.016; // Fixed 60fps
+                this.zOffset = this.time * (this.noiseSpeed/1000); // Apply noise speed to Z evolution
+                
+                this.updateGrid();
+                
+                requestAnimationFrame(() => this.animate());
+            }
+            
+                                     randomizeSettings() {
+                // Random emoji set
+                const setKeys = Object.keys(this.emojiSets);
+                const randomSetKey = setKeys[Math.floor(Math.random() * setKeys.length)];
+                this.currentEmojiSet = this.emojiSets[randomSetKey];
+                
+                // Random parameters
+                this.gridRows = 6 + Math.floor(Math.random() * 12);
+                this.gridCols = 6 + Math.floor(Math.random() * 12);
+                this.cellSize = 24 + Math.floor(Math.random() * 36);
+                this.noiseSpeed = 0.0001 + Math.random() * 0.0001;
+                this.noiseScale = 0.01 + Math.random() * 0.03;
+                
+                // Update UI
+                document.getElementById('gridRows').value = this.gridRows;
+                document.getElementById('gridCols').value = this.gridCols;
+                document.getElementById('cellSize').value = this.cellSize;
+                document.getElementById('noiseSpeed').value = this.noiseSpeed;
+                document.getElementById('noiseScale').value = this.noiseScale;
+                
+                // Update number inputs
+                document.getElementById('gridRowsNum').value = this.gridRows;
+                document.getElementById('gridColsNum').value = this.gridCols;
+                document.getElementById('cellSizeNum').value = this.cellSize;
+                document.getElementById('noiseSpeedNum').value = this.noiseSpeed;
+                document.getElementById('noiseScaleNum').value = this.noiseScale;
+                
+                // Regenerate grid with new emoji assignments
+                this.initializeGrid();
+            }
+            
+            setupEventListeners() {
+                // Lucky button
+                document.getElementById('luckyBtn').addEventListener('click', () => {
+                    this.randomizeSettings();
+                });
+                
+                // Pause button
+                const pauseBtn = document.getElementById('pauseBtn');
+                pauseBtn.addEventListener('click', () => {
+                    this.isAnimating = !this.isAnimating;
+                    pauseBtn.textContent = this.isAnimating ? 'pause' : 'play';
+                    if (this.isAnimating) this.animate();
+                });
+                
+                // Debug button
+                const debugBtn = document.getElementById('debugBtn');
+                debugBtn.addEventListener('click', () => {
+                    this.debugMode = !this.debugMode;
+                    debugBtn.textContent = this.debugMode ? 'emoji' : 'debug';
+                    this.initializeGrid(); // Reinitialize to reset emoji assignments
+                });
+                
+                // Fullscreen functionality for canvas container
+                const canvasContainer = document.querySelector('.canvas-container');
+                const fullscreenToggle = () => {
+                    if (!document.fullscreenElement) {
+                        canvasContainer.requestFullscreen();
+                    } else {
+                        document.exitFullscreen();
+                    }
+                };
+                
+                // Settings sliders and number inputs
+                document.getElementById('gridRows').addEventListener('input', (e) => {
+                    this.gridRows = parseInt(e.target.value);
+                    document.getElementById('gridRowsNum').value = this.gridRows;
+                    this.initializeGrid();
+                });
+                
+                document.getElementById('gridRowsNum').addEventListener('input', (e) => {
+                    this.gridRows = parseInt(e.target.value);
+                    document.getElementById('gridRows').value = this.gridRows;
+                    this.initializeGrid();
+                });
+                
+                document.getElementById('gridCols').addEventListener('input', (e) => {
+                    this.gridCols = parseInt(e.target.value);
+                    document.getElementById('gridColsNum').value = this.gridCols;
+                    this.initializeGrid();
+                });
+                
+                document.getElementById('gridColsNum').addEventListener('input', (e) => {
+                    this.gridCols = parseInt(e.target.value);
+                    document.getElementById('gridCols').value = this.gridCols;
+                    this.initializeGrid();
+                });
+                
+                document.getElementById('cellSize').addEventListener('input', (e) => {
+                    this.cellSize = parseInt(e.target.value);
+                    document.getElementById('cellSizeNum').value = this.cellSize;
+                    this.initializeGrid();
+                });
+                
+                document.getElementById('cellSizeNum').addEventListener('input', (e) => {
+                    this.cellSize = parseInt(e.target.value);
+                    document.getElementById('cellSize').value = this.cellSize;
+                    this.initializeGrid();
+                });
+                
+                document.getElementById('noiseSpeed').addEventListener('input', (e) => {
+                    this.noiseSpeed = parseFloat(e.target.value);
+                    document.getElementById('noiseSpeedNum').value = this.noiseSpeed;
+                    // Force animation restart if paused to show immediate effect
+                    if (!this.isAnimating) {
+                        this.isAnimating = true;
+                        pauseBtn.textContent = 'pause';
+                        this.animate();
+                    }
+                });
+                
+                document.getElementById('noiseSpeedNum').addEventListener('input', (e) => {
+                    this.noiseSpeed = parseFloat(e.target.value);
+                    document.getElementById('noiseSpeed').value = this.noiseSpeed;
+                    // Force animation restart if paused to show immediate effect
+                    if (!this.isAnimating) {
+                        this.isAnimating = true;
+                        pauseBtn.textContent = 'pause';
+                        this.animate();
+                    }
+                });
+                
+                document.getElementById('noiseScale').addEventListener('input', (e) => {
+                    this.noiseScale = parseFloat(e.target.value);
+                    document.getElementById('noiseScaleNum').value = this.noiseScale;
+                    // Force animation restart if paused to show immediate effect
+                    if (!this.isAnimating) {
+                        this.isAnimating = true;
+                        pauseBtn.textContent = 'pause';
+                        this.animate();
+                    }
+                });
+                
+                document.getElementById('noiseScaleNum').addEventListener('input', (e) => {
+                    this.noiseScale = parseFloat(e.target.value);
+                    document.getElementById('noiseScale').value = this.noiseScale;
+                    // Force animation restart if paused to show immediate effect
+                    if (!this.isAnimating) {
+                        this.isAnimating = true;
+                        pauseBtn.textContent = 'pause';
+                        this.animate();
+                    }
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    switch(e.key) {
+                        case ' ':
+                            e.preventDefault();
+                            this.isAnimating = !this.isAnimating;
+                            pauseBtn.textContent = this.isAnimating ? 'pause' : 'play';
+                            if (this.isAnimating) this.animate();
+                            break;
+                        case 'f':
+                        case 'F':
+                            e.preventDefault();
+                            fullscreenToggle();
+                            break;
+                        case 'l':
+                        case 'L':
+                            e.preventDefault();
+                            this.randomizeSettings();
+                            break;
+                    }
+                });
+            }
+        }
+        
+        // Initialize the app
+        const app = new EmojiQuilt();
+    </script>
+</body>
+</html> 

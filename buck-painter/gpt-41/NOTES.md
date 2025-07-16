@@ -1,0 +1,5 @@
+- GPT 4.1 actually asked me some questions before it started, which made me feel seen.
+- It's actually using vite and some tooling. Cool.
+- GPT keeps stopping, but it's made a little to-do list for itself. This is really good
+- you need to babysit it, but it moves pretty slow and doesn't seem to break things outright nearly as much as Claude
+- making changes or improvements to existing features does kind of jump the line and get in the way of the to-dos though

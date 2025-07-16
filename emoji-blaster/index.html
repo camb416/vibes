@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Blaster</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>E M O J I   B L A S T E R</h1>
+        
+        <div class="controls">
+            <button id="autoBtn">AUTO MODE</button>
+            <button id="clearBtn">CLEAR</button>
+            <button id="exportBtn">EXPORT</button>
+            <label for="emojiSelect">EMOJI:</label>
+            <select id="emojiSelect">
+                <option value="random">RANDOM</option>
+                <option value="🎉">PARTY</option>
+                <option value="❤️">HEARTS</option>
+                <option value="⭐">STARS</option>
+                <option value="🌈">RAINBOW</option>
+                <option value="🎨">ART</option>
+                <option value="🚀">SPACE</option>
+                <option value="🌸">FLOWERS</option>
+            </select>
+        </div>
+        
+        <div class="instructions">
+            <p>CLICK OR TAP TO BLAST EMOJI / USE CONTROLS ABOVE TO CUSTOMIZE</p>
+        </div>
+        
+        <div id="canvas-container"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

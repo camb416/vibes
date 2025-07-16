@@ -1,0 +1,6 @@
+- it made a "start painting button" I clicked it, nothing happens
+- sent the typeerror back to o3
+- it also didn't automatically give me the command to run a local http-server, but i know how to do that so whatever.
+- do wish these things would think to make a livereload environment
+- holy shit it kinda worked
+- importing model doesn't work though.

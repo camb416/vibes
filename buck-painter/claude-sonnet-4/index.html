@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUCK Painter</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/GLTFExporter.js"></script>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <img src="buck-logo-black-tight.png" alt="BUCK Logo" class="logo">
+            <h1 class="app-title">BUCK Painter</h1>
+            <p class="app-subtitle">3D Vertex Painting Tool</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app-container" class="app-container hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <img src="buck-logo-black-tight.png" alt="BUCK Logo" class="header-logo">
+                <span class="header-title">BUCK Painter</span>
+            </div>
+            <div class="header-right">
+                <button id="help-btn" class="btn btn-secondary">Help</button>
+                <button id="export-btn" class="btn btn-primary">Export</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="toolbar-section">
+                    <h3>File</h3>
+                    <button id="import-btn" class="btn btn-small">Import GLTF</button>
+                    <button id="reset-btn" class="btn btn-small">Reset Model</button>
+                </div>
+                
+                <div class="toolbar-section">
+                    <h3>Materials</h3>
+                    <div id="material-palette" class="material-palette">
+                        <!-- Material buttons will be added by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="toolbar-section">
+                    <h3>Brush</h3>
+                    <div class="brush-controls">
+                        <label>Size: <input type="range" id="brush-size" min="1" max="50" value="10"></label>
+                        <label>Strength: <input type="range" id="brush-strength" min="0" max="1" step="0.1" value="0.5"></label>
+                        <label>Falloff: <input type="range" id="brush-falloff" min="0" max="1" step="0.1" value="0.5"></label>
+                    </div>
+                </div>
+                
+                <div class="toolbar-section">
+                    <h3>Display</h3>
+                    <div class="display-controls">
+                        <label><input type="radio" name="display-mode" value="all" checked> All Materials</label>
+                        <label><input type="radio" name="display-mode" value="individual"> Individual</label>
+                        <label><input type="radio" name="display-mode" value="testing"> Testing Colors</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Viewport -->
+            <div class="viewport-container">
+                <canvas id="viewport" class="viewport"></canvas>
+                <div class="viewport-info">
+                    <span id="vertex-count">Vertices: 0</span>
+                    <span id="mouse-pos">Mouse: (0, 0)</span>
+                    <span class="paint-instruction">Left Click: Paint | Right Drag: Rotate</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>BUCK Painter Instructions</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Getting Started</h3>
+                <p>BUCK Painter is a 3D vertex painting tool that allows you to paint materials directly onto 3D models in your browser.</p>
+                
+                <h3>Basic Controls</h3>
+                <ul>
+                    <li><strong>Left Mouse:</strong> Paint with selected material</li>
+                    <li><strong>Right Mouse + Drag:</strong> Rotate camera</li>
+                    <li><strong>Mouse Wheel:</strong> Zoom in/out</li>
+                    <li><strong>Middle Mouse + Drag:</strong> Pan camera</li>
+                </ul>
+                
+                <h3>Painting</h3>
+                <ul>
+                    <li>Select a material from the palette</li>
+                    <li>Adjust brush size, strength, and falloff</li>
+                    <li>Click and drag on the model to paint</li>
+                    <li>Use different display modes to see your work</li>
+                </ul>
+                
+                <h3>Materials</h3>
+                <ul>
+                    <li>Choose from predefined materials</li>
+                    <li>Adjust material properties with sliders</li>
+                    <li>Use testing colors to see material distribution</li>
+                </ul>
+                
+                <h3>Export</h3>
+                <ul>
+                    <li>Export your painted model as GLTF</li>
+                    <li>Compatible with Apple's Reality Composer Pro</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html> 

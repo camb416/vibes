@@ -1,0 +1,16 @@
+{
+  "name": "emoji-blaster",
+  "version": "1.0.0",
+  "description": "High-performance emoji explosion game with sophisticated physics",
+  "main": "index.html",
+  "scripts": {
+    "dev": "node dev-server.js",
+    "build": "node build.js",
+    "serve": "node dev-server.js",
+    "setup": "npm install && echo '✅ Setup complete! Run npm run dev to start development server'"
+  },
+  "devDependencies": {},
+  "keywords": ["emoji", "game", "physics", "p5js", "interactive"],
+  "author": "Emoji Blaster Team",
+  "license": "MIT"
+} 

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type Fractals</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <canvas id="fractal-canvas"></canvas>
+        
+        <div class="controls-panel">
+            <div class="controls-header">
+                <h1>TYPE FRACTALS</h1>
+                <div class="seed-display">
+                    <span>SEED: </span>
+                    <span id="current-seed">000000</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>TEXT</label>
+                <input type="text" id="text-input" value="A" maxlength="5">
+            </div>
+            
+            <div class="control-group">
+                <label>TYPEFACE</label>
+                <select id="font-select">
+                    <option value="Inter">Inter</option>
+                    <option value="Space Grotesk">Space Grotesk</option>
+                    <option value="JetBrains Mono">JetBrains Mono</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>FONT WEIGHT</label>
+                <select id="weight-select">
+                    <option value="300">Light</option>
+                    <option value="400">Regular</option>
+                    <option value="500">Medium</option>
+                    <option value="600">Semi Bold</option>
+                    <option value="700" selected>Bold</option>
+                    <option value="800">Extra Bold</option>
+                    <option value="900">Black</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>ALGORITHM</label>
+                <select id="algorithm-select">
+                    <option value="recursive">Recursive Division</option>
+                    <option value="spiral">Spiral Transform</option>
+                    <option value="tree">Tree Branching</option>
+                    <option value="geometric">Geometric Tiling</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>ITERATIONS</label>
+                <input type="range" id="iterations-slider" min="1" max="8" value="4">
+                <span id="iterations-value">4</span>
+            </div>
+            
+            <div class="control-group">
+                <label>PALETTE</label>
+                <div class="palette-grid">
+                    <div class="palette-option active" data-palette="mono">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #000"></div>
+                            <div class="color-dot" style="background: #666"></div>
+                            <div class="color-dot" style="background: #ccc"></div>
+                        </div>
+                        <span>MONO</span>
+                    </div>
+                    <div class="palette-option" data-palette="warm">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #d2691e"></div>
+                            <div class="color-dot" style="background: #ff6b35"></div>
+                            <div class="color-dot" style="background: #f7931e"></div>
+                        </div>
+                        <span>WARM</span>
+                    </div>
+                    <div class="palette-option" data-palette="cool">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #2e86ab"></div>
+                            <div class="color-dot" style="background: #a23b72"></div>
+                            <div class="color-dot" style="background: #f18f01"></div>
+                        </div>
+                        <span>COOL</span>
+                    </div>
+                    <div class="palette-option" data-palette="neon">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #ff0080"></div>
+                            <div class="color-dot" style="background: #00ff80"></div>
+                            <div class="color-dot" style="background: #8000ff"></div>
+                        </div>
+                        <span>NEON</span>
+                    </div>
+                    <div class="palette-option" data-palette="earth">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #8b4513"></div>
+                            <div class="color-dot" style="background: #daa520"></div>
+                            <div class="color-dot" style="background: #228b22"></div>
+                        </div>
+                        <span>EARTH</span>
+                    </div>
+                    <div class="palette-option" data-palette="ocean">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #006994"></div>
+                            <div class="color-dot" style="background: #20b2aa"></div>
+                            <div class="color-dot" style="background: #4682b4"></div>
+                        </div>
+                        <span>OCEAN</span>
+                    </div>
+                    <div class="palette-option" data-palette="sunset">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #ff69b4"></div>
+                            <div class="color-dot" style="background: #ff8c00"></div>
+                            <div class="color-dot" style="background: #dc143c"></div>
+                        </div>
+                        <span>SUNSET</span>
+                    </div>
+                    <div class="palette-option" data-palette="forest">
+                        <div class="palette-preview">
+                            <div class="color-dot" style="background: #355e3b"></div>
+                            <div class="color-dot" style="background: #8fbc8f"></div>
+                            <div class="color-dot" style="background: #654321"></div>
+                        </div>
+                        <span>FOREST</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="generate-btn" class="primary-btn">GENERATE</button>
+                <button id="stop-btn" class="stop-btn" style="display: none;">STOP</button>
+                <button id="lucky-btn" class="secondary-btn">I'M FEELING LUCKY</button>
+                <button id="export-btn" class="secondary-btn">EXPORT PNG</button>
+            </div>
+        </div>
+        
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p>GENERATING FRACTAL...</p>
+        </div>
+    </div>
+    
+    <script src="fractals.js"></script>
+    <script src="export.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

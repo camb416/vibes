@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>BUCK Painter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/png" href="buck-logo-black-tight.png">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Import map to resolve bare module specifiers for Three.js and its addons -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="splash-screen" class="overlay">
+     <img src="buck-logo-black-tight.png" alt="BUCK Logo" class="logo"/>
+     <button id="start-btn">Start Painting</button>
+  </div>
+
+  <div id="instructions" class="overlay hidden">
+      <h2>BUCK Painter Instructions</h2>
+      <p>Welcome to BUCK Painter!</p>
+      <ul>
+        <li>Click and drag on the model to paint using the selected material.</li>
+        <li>Use the right mouse button to rotate, middle / wheel to zoom, and shift-left-drag to pan.</li>
+        <li>Select brush size and material color using the panel on the right.</li>
+        <li>Load your own GLTF/GLB models using the "Load Model" button.</li>
+        <li>Export your painted model using the "Export GLTF" button.</li>
+      </ul>
+      <button id="close-instructions">Close</button>
+  </div>
+
+  <input id="file-input" type="file" accept=".gltf,.glb,model/gltf-binary" class="hidden"/>
+
+  <canvas id="viewport"></canvas>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html> 
