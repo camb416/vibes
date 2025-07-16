@@ -1,5 +1,5 @@
 # My Vibe Coding Guidelines
-by [camb416](github.com/camb416)
+by [camb416](https://github.com/camb416)
 
 Last Updated: 07-16-2025
 
