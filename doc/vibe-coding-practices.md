@@ -23,4 +23,4 @@ My vibe coding is most fun and effective for the first hour or two. If I'm spend
 
 ## 5. Don't Trust it
 
-If I use any proprietary or personal info (including any API Key) in a prompt or context, I DO NOT post, push or deploy it without a HUMAN developer reviewing it.
+If I'm not reading the code, I don't post it publicly. 
