@@ -1,0 +1,26 @@
+{
+    "title": "Isometric Multicolor Extrusion with Grid Control",
+    "viewAngle": {
+      "type": "Isometric",
+      "facingDirection": "right",
+      "rotationDegrees": { "x": 30, "y": 30 }
+    },
+    "renderingStyle": "Clean 3D vector with extrusion",
+    "objectSurface": {
+      "frontFace": { "color": "#ffffff", "material": "Matte" },
+      "extrudedSide": {
+        "type": "Gradient",
+        "gradientStyle": "Diagonal sweep",
+        "colorStops": ["#ff0040", "#ff8000", "#ffff00", "#00ff90", "#00cfff", "#8000ff"]
+      }
+    },
+    "extrusion": { "direction": "right", "depth": "moderate" },
+    "background": {
+      "type": "Isometric grid",
+      "color": "#ffffff",
+      "gridStyle": {
+        "lineColor": "#e0e0e0",
+        "lineWeight": "1px"
+      }
+    }
+  }

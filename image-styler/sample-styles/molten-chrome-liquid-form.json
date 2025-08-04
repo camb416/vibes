@@ -1,0 +1,25 @@
+{
+    "title": "Molten Chrome Liquid Form",
+    "materials": [
+      {
+        "type": "Liquid metal",
+        "finish": "High gloss chrome",
+        "texture": "Smooth, flowing distortions"
+      }
+    ],
+    "lighting": {
+      "intensity": "Strong",
+      "source": "Top-front highlight",
+      "effects": "Reflected environment"
+    },
+    "colorPalette": {
+      "baseMetal": "#b0c4de",
+      "highlight": "#ffffff",
+      "shadow": "#2a2a2a"
+    },
+    "background": {
+      "type": "Solid black",
+      "mood": "Luxury tech"
+    },
+    "moodKeywords": ["Futuristic", "Molten", "Sleek", "High-tech", "Luxury"]
+  }

@@ -1,0 +1,725 @@
+/* Base node styling - minimal */
+.custom-node {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  min-width: 150px;
+  max-width: 280px;
+  border-radius: 0;
+  position: relative;
+}
+
+.custom-node.selected {
+  box-shadow: 0 0 0 2px #ff6060;
+}
+
+/* Remove default headers - use visual cues instead */
+.node-header {
+  display: none;
+}
+
+.node-icon {
+  font-size: 16px;
+  margin-right: 4px;
+  min-width: 16px;
+}
+
+.node-title {
+  font-weight: 600;
+  flex: 1;
+}
+
+.toggle-btn {
+  background: #ff6060;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  background: #ff4545;
+}
+
+/* Text Input Node - Notebook Page */
+.text-input-node {
+  background: #f8f8ff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.text-input-node::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: #ff6b6b;
+  opacity: 0.8;
+}
+
+.text-input-node::after {
+  content: '';
+  position: absolute;
+  left: 25px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #ddd;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 19px,
+    #ddd 19px,
+    #ddd 21px
+  );
+}
+
+.text-input-node .node-content {
+  padding: 12px 12px 12px 35px;
+  background: transparent;
+}
+
+/* Image Node - Polaroid */
+.image-node {
+  background: #fff;
+  border: 8px solid #fff;
+  border-bottom: 25px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100%;
+}
+
+.image-node.selected {
+  transform: scale(1.02);
+}
+
+.image-node .node-content {
+  padding: 0;
+  background: transparent;
+  width: 100%;
+  height: calc(100% - 33px); /* Account for header */
+  display: flex;
+  flex-direction: column;
+}
+
+.image-node .output-controls,
+.image-node .input-preview {
+  position: absolute;
+  bottom: -20px;
+  left: 5px;
+  right: 5px;
+  font-size: 8px;
+}
+
+/* Style Node - Sticky Note */
+.style-node {
+  background: #ffeb3b;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  position: relative;
+}
+
+.style-node::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.style-node.selected {
+  transform: scale(1.05);
+}
+
+.style-node .node-content {
+  padding: 15px 12px 12px 12px;
+}
+
+/* My Style Node - Sticky Note (different color) */
+.my-style-node {
+  background: #ff9800;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  position: relative;
+}
+
+.my-style-node::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: 15px;
+  width: 40px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.my-style-node .node-content {
+  padding: 15px 12px 12px 12px;
+}
+
+
+
+/* Mix Node - Simple Rectangle */
+.mix-node {
+  background: #e8e8e8;
+  border: 2px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.mix-node::before {
+  content: 'MIX';
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  font-size: 7px;
+  color: #666;
+  font-weight: bold;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.mix-node .node-content {
+  padding: 12px;
+}
+
+.node-content {
+  padding: 12px;
+}
+
+/* Text Input Styling */
+.text-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #222;
+  padding: 8px 0;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  resize: vertical;
+  min-height: 60px;
+  line-height: 20px;
+}
+
+.text-input:focus {
+  outline: none;
+}
+
+/* Image Container - Polaroid Style */
+.image-container {
+  width: 100%;
+  flex: 1;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+  position: relative;
+  background: #f5f5f5;
+  min-height: 120px;
+}
+
+.image-container:hover {
+  background: #f0f0f0;
+}
+
+.node-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.image-placeholder {
+  text-align: center;
+  color: #666;
+  padding: 15px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.image-placeholder p {
+  margin: 0 0 8px 0;
+  font-size: 9px;
+}
+
+.image-placeholder button {
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 4px 8px;
+  border-radius: 2px;
+  margin: 2px;
+  font-size: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+}
+
+.image-placeholder button:hover {
+  background: rgba(255, 96, 96, 0.1);
+  border-color: #ff6060;
+}
+
+.generate-btn {
+  background: #ff6060;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-weight: 500;
+  cursor: pointer;
+  flex: 1;
+  font-size: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.generate-btn:hover {
+  background: #ff4545;
+}
+
+.generate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+
+.check-mix-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.image-icon-controls {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.icon-btn {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  max-width: 20px;
+  max-height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
+}
+
+.check-prompt-icon {
+  font-weight: bold;
+  color: #666;
+}
+
+.generate-icon {
+  color: #007bff;
+  font-size: 12px;
+}
+
+.icon-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.input-preview {
+  margin-top: 8px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.preview-item {
+  font-size: 8px;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.preview-item:last-child {
+  margin-bottom: 0;
+}
+
+.preview-item strong {
+  color: #333;
+}
+
+/* Mix Node Specific Styles */
+.mix-control {
+  margin-bottom: 8px;
+}
+
+.mix-percentage-display {
+  text-align: center;
+  font-size: 9px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.mix-slider {
+  width: 100%;
+  margin: 4px 0;
+  height: 4px;
+  background: #ddd;
+  outline: none;
+  border-radius: 2px;
+  cursor: pointer;
+  z-index: 10;
+  position: relative;
+}
+
+.mix-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff6060;
+  cursor: pointer;
+}
+
+.mix-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  color: #666;
+  font-weight: bold;
+}
+
+.mix-input-preview {
+  font-size: 7px;
+  color: #555;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+/* Handle Labels */
+.handle-label {
+  position: absolute;
+  font-size: 8px;
+  font-weight: bold;
+  color: #666;
+  pointer-events: none;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.handle-label-left {
+  left: -18px;
+  transform: translateY(-50%);
+}
+
+.handle-label-right {
+  right: -22px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Add Node - Small Nubbin with Plus */
+.add-node {
+  background: #f0f0f0;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-symbol {
+  font-size: 20px;
+  font-weight: bold;
+  color: #666;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.add-preview {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 7px;
+  color: #666;
+  white-space: nowrap;
+  max-width: 80px;
+  z-index: 5;
+}
+
+.add-input-preview {
+  margin-bottom: 1px;
+  line-height: 1.2;
+}
+
+.add-input-preview:last-child {
+  margin-bottom: 0;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #ff6060;
+  font-weight: 500;
+}
+
+/* Style Node Dropdown */
+.style-dropdown {
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  color: #222;
+  padding: 4px;
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 8px;
+}
+
+.style-dropdown:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+.style-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.keyword-tag {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+  padding: 1px 4px;
+  border-radius: 8px;
+  font-size: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.keyword-tag button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* My Style Node */
+.my-style-node {
+  max-width: 300px;
+}
+
+.custom-style-form {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 8px;
+  color: #333;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  color: #222;
+  padding: 3px 4px;
+  font-size: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+.keyword-input {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.keyword-input input {
+  flex: 1;
+}
+
+.keyword-input button {
+  background: rgba(0, 0, 0, 0.2);
+  color: #333;
+  border: none;
+  padding: 3px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.keywords-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Image Batch Node */
+.image-batch-node {
+  min-width: 280px;
+}
+
+.batch-controls {
+  margin-bottom: 15px;
+}
+
+.batch-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.batch-actions .generate-btn {
+  flex: 2;
+}
+
+.batch-actions .check-prompt-btn {
+  flex: 1;
+}
+
+.clear-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background: #c82333;
+}
+
+.progress-bar {
+  position: relative;
+  height: 20px;
+  background: #333;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #ff6060;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+}
+
+.batch-results {
+  margin-top: 15px;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.batch-image {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.batch-image img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+}
+
+.download-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.batch-image:hover .download-btn {
+  opacity: 1;
+}

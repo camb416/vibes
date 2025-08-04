@@ -1,0 +1,28 @@
+{
+  "title": "Bioluminescent Forest",
+  "materials": [
+    {
+      "type": "Living fungal growth",
+      "effect": "Natural blue-green glow"
+    },
+    {
+      "type": "Translucent mushroom caps",
+      "texture": "Soft organic curves"
+    }
+  ],
+  "lighting": {
+    "intensity": "Soft ambient",
+    "source": "Bioluminescent organisms",
+    "effects": "Gentle pulsing glow"
+  },
+  "colorPalette": {
+    "primary": "#00ff88",
+    "secondary": "#0099cc",
+    "accent": "#44ff00"
+  },
+  "background": {
+    "type": "Dark forest",
+    "mood": "Mystical and alive"
+  },
+  "moodKeywords": ["Bioluminescent", "Organic", "Mystical", "Living", "Nature"]
+}

@@ -1,0 +1,28 @@
+{
+  "title": "Crystalline Ice Formation",
+  "materials": [
+    {
+      "type": "Pure ice crystal",
+      "texture": "Sharp angular facets"
+    },
+    {
+      "type": "Frozen condensation",
+      "effect": "Delicate frost details"
+    }
+  ],
+  "lighting": {
+    "intensity": "Soft diffused",
+    "source": "Natural daylight through ice",
+    "effects": "Internal light refraction"
+  },
+  "colorPalette": {
+    "primary": "#e6f7ff",
+    "secondary": "#b3e0ff",
+    "accent": "#ffffff"
+  },
+  "background": {
+    "type": "Arctic landscape",
+    "mood": "Serene and cold"
+  },
+  "moodKeywords": ["Crystal", "Pure", "Cold", "Geometric", "Natural"]
+}

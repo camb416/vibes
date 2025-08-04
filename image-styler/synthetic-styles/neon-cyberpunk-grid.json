@@ -1,0 +1,28 @@
+{
+  "title": "Neon Cyberpunk Grid",
+  "materials": [
+    {
+      "type": "Holographic display",
+      "effect": "Glowing data streams"
+    },
+    {
+      "type": "Carbon fiber",
+      "finish": "Matte black with neon accents"
+    }
+  ],
+  "lighting": {
+    "intensity": "High contrast",
+    "source": "Neon underglow",
+    "effects": "Electric blue highlights"
+  },
+  "colorPalette": {
+    "primary": "#00ffff",
+    "secondary": "#ff0080",
+    "background": "#0a0a0a"
+  },
+  "background": {
+    "type": "Dark grid pattern",
+    "mood": "Futuristic tech"
+  },
+  "moodKeywords": ["Cyberpunk", "Neon", "Digital", "High-tech", "Electric"]
+}

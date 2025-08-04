@@ -1,0 +1,16 @@
+{
+    "title": "Clear Iridescent Glass Form",
+    "viewAngle": "Orthographic straight-on",
+    "background": {
+      "color": "#ffffff",
+      "lighting": "Soft top studio light"
+    },
+    "materialsAndTextures": [
+      { "type": "Transparent glass", "description": "Rounded edges with internal glow" },
+      { "type": "Iridescent core", "colors": ["#f8e1ff", "#dff8ff", "#fff6d2", "#ebd4ff"] }
+    ],
+    "lighting": {
+      "reflections": "Highlight edges",
+      "shadow": "Soft drop below"
+    }
+  }

@@ -1,0 +1,27 @@
+{
+    "title": "Organic Moss Sculpture",
+    "materials": [
+      {
+        "type": "Lush moss",
+        "description": "Realistic micro-fiber green moss with irregular surface"
+      },
+      {
+        "type": "Damp organic fuzz",
+        "effect": "Natural light scattering"
+      }
+    ],
+    "lighting": {
+      "intensity": "Medium",
+      "source": "Overhead soft spot",
+      "shadow": "Faint, blurred"
+    },
+    "colorPalette": {
+      "primary": "#4d9f3a",
+      "shadowTint": "#222222"
+    },
+    "background": {
+      "type": "Solid black",
+      "mood": "Neutral contrast for green"
+    },
+    "moodKeywords": ["Natural", "Eco", "Tactile", "Organic", "Earthy"]
+  }
