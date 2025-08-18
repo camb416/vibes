@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Curves</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <!-- Three.js postprocessing -->
+    <script src="https://threejs.org/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://threejs.org/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://threejs.org/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://threejs.org/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://threejs.org/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://threejs.org/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://threejs.org/examples/js/shaders/FXAAShader.js"></script>
+    <!-- Tone.js for MIDI music generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        #scene-container {
+            width: 1280px;
+            height: 720px;
+            position: relative;
+            border: 2px solid #666;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+
+        
+        @media (max-width: 1300px) {
+            #scene-container {
+                width: 90vw;
+                height: calc(90vw * 0.5625);
+                max-width: 1280px;
+                max-height: 720px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="scene-container">
+        
+        <a-scene 
+            id="main-scene"
+            embedded 
+            style="height: 100%; width: 100%;"
+            vr-mode-ui="enabled: false"
+            custom-postprocessing
+            background="color: #000000">
+            
+            <!-- Assets -->
+            <a-assets>
+                <!-- Local studio HDR environment texture -->
+                <img id="studio-hdr" src="./studio_small_09_2k.hdr" crossorigin="anonymous">
+            </a-assets>
+            
+            <!-- Studio HDR Environment Background -->
+            <a-sky 
+                material="
+                    src: #studio-hdr;
+                    side: back;
+                " 
+                radius="100"
+                segments-width="64"
+                segments-height="32">
+            </a-sky>
+            
+            <!-- Enhanced Lighting for Perfect Metallic Reflection -->
+            <a-light type="ambient" color="#404040" intensity="0.2"></a-light>
+            <a-light type="directional" position="5 8 6" color="#ffffff" intensity="2.0" castShadow="true"></a-light>
+            <a-light type="directional" position="-4 6 -5" color="#ffffff" intensity="1.5"></a-light>
+            <a-light type="point" position="3 4 3" color="#ffffff" intensity="1.2"></a-light>
+            <a-light type="point" position="-4 3 -2" color="#ffffff" intensity="1.0"></a-light>
+            <a-light type="point" position="0 -3 4" color="#ffffff" intensity="0.8"></a-light>
+            <a-light type="spot" position="0 8 0" target="#orbital-ribbons" color="#ffffff" intensity="1.0" angle="60"></a-light>
+            
+            <!-- Camera with dolly zoom animation -->
+            <a-camera 
+                id="main-camera"
+                position="0 0 5"
+                look-controls="enabled: false"
+                wasd-controls="enabled: false">
+                <a-animation
+                    attribute="position"
+                    to="0 0 0"
+                    dur="3000"
+                    easing="easeOutCubic"
+                    begin="1000">
+                </a-animation>
+            </a-camera>
+            
+            <!-- Möbius Strip Object -->
+            <a-entity 
+                id="mobius-container"
+                position="0 0 0"
+                rotation="0 0 0">
+                
+                <!-- Concentric orbital ribbons with procedural noise -->
+                <a-entity 
+                    id="orbital-ribbons"
+                    orbital-ribbons>
+                </a-entity>
+            </a-entity>
+        </a-scene>
+    </div>
+
+    <script>
+        // Ambient Music System using Tone.js
+        class AmbientMusicSystem {
+            constructor() {
+                this.isPlaying = false;
+                this.synths = [];
+                this.sequences = [];
+                this.reverb = null;
+                this.filter = null;
+                this.initialized = false;
+            }
+            
+            async init() {
+                if (this.initialized) return;
+                
+                // Wait for user interaction to start audio context
+                await Tone.start();
+                
+                // Create reverb and filter effects - more audible
+                this.reverb = new Tone.Reverb({
+                    decay: 6,
+                    wet: 0.4,
+                    preDelay: 0.05
+                }).toDestination();
+                
+                this.filter = new Tone.Filter({
+                    frequency: 1200,
+                    type: "lowpass",
+                    rolloff: -12
+                }).connect(this.reverb);
+                
+                // Add compressor and master volume control to prevent clipping
+                this.compressor = new Tone.Compressor({
+                    threshold: -24,
+                    ratio: 4,
+                    attack: 0.003,
+                    release: 0.1
+                }).connect(this.filter);
+                
+                this.masterVolume = new Tone.Volume(-12).connect(this.compressor);
+                
+                // Create ambient pads - balanced volume to prevent clipping
+                const synthConfigs = [
+                    { attack: 2, decay: 1, sustain: 0.7, release: 4, volume: -18 },
+                    { attack: 3, decay: 2, sustain: 0.5, release: 6, volume: -20 },
+                    { attack: 1.5, decay: 0.8, sustain: 0.8, release: 3, volume: -22 },
+                    { attack: 4, decay: 1.5, sustain: 0.6, release: 5, volume: -24 }
+                ];
+                
+                synthConfigs.forEach(config => {
+                    const synth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "sine" },
+                        envelope: config
+                    }).connect(this.masterVolume);
+                    synth.volume.value = config.volume;
+                    this.synths.push(synth);
+                });
+                
+                this.initialized = true;
+            }
+            
+            start() {
+                if (this.isPlaying || !this.initialized) return;
+                
+                // Cool ambient chord progressions - no warm/yellow tones
+                const chords = [
+                    ["C4", "E4", "G4", "B4"],      // C major 7
+                    ["Am3", "C4", "E4", "G4"],     // A minor 7
+                    ["Dm3", "F3", "A3", "C4"],     // D minor 7
+                    ["Em3", "G3", "B3", "D4"],     // E minor 7
+                    ["F3", "A3", "C4", "E4"],      // F major 7
+                    ["G3", "B3", "D4", "F4"]       // G major 7
+                ];
+                
+                // Create sequences for each synth
+                this.synths.forEach((synth, index) => {
+                    const sequence = new Tone.Sequence((time, chord) => {
+                        if (Math.random() > 0.4) { // 60% chance to play - less dense to reduce clipping
+                            synth.triggerAttackRelease(chord, "2n", time); // Shorter notes to reduce overlap
+                        }
+                    }, chords, `${8 + index * 2}n`); // Slower timing to reduce density
+                    
+                    sequence.start(0);
+                    this.sequences.push(sequence);
+                });
+                
+                // Start transport
+                Tone.Transport.bpm.value = 45; // Very slow, ambient tempo
+                Tone.Transport.start();
+                this.isPlaying = true;
+            }
+            
+            stop() {
+                if (!this.isPlaying) return;
+                
+                this.sequences.forEach(seq => seq.stop());
+                this.sequences = [];
+                Tone.Transport.stop();
+                this.isPlaying = false;
+            }
+        }
+        
+        // Global music system
+        const ambientMusic = new AmbientMusicSystem();
+        
+        // Custom postprocessing component
+        AFRAME.registerComponent('custom-postprocessing', {
+            init: function() {
+                const sceneEl = this.el;
+                
+                // Wait for scene to be fully loaded
+                sceneEl.addEventListener('loaded', () => {
+                    setTimeout(() => {
+                        this.setupPostProcessing();
+                    }, 1000); // Give time for everything to initialize
+                });
+            },
+            
+            setupPostProcessing: function() {
+                const sceneEl = this.el;
+                const renderer = sceneEl.renderer;
+                const scene = sceneEl.object3D;
+                const camera = sceneEl.camera;
+                
+                if (!renderer || !camera || !scene) {
+                    console.warn('Renderer, camera, or scene not ready for postprocessing');
+                    return;
+                }
+                
+                console.log('Setting up postprocessing...');
+                
+                // Create composer with proper sizing
+                this.composer = new THREE.EffectComposer(renderer);
+                const canvas = renderer.domElement;
+                this.composer.setSize(canvas.width, canvas.height);
+                
+                // Ensure renderer covers full canvas
+                renderer.setSize(canvas.width, canvas.height);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                
+                // Render pass - renders the scene
+                const renderPass = new THREE.RenderPass(scene, camera);
+                this.composer.addPass(renderPass);
+                
+                // Bloom pass - Optimized for performance
+                const bloomPass = new THREE.UnrealBloomPass(
+                    new THREE.Vector2(Math.min(canvas.width, 1920), Math.min(canvas.height, 1080)), // Cap resolution for performance
+                    1.2, // Reduced strength for performance
+                    1.5, // Reduced radius for performance
+                    0.1   // Higher threshold for performance
+                );
+                this.composer.addPass(bloomPass);
+                
+                // Film grain and vignette shader
+                const filmGrainShader = {
+                    uniforms: {
+                        tDiffuse: { value: null },
+                        time: { value: 0 },
+                        nIntensity: { value: 0.25 }, // Reduced film grain for performance
+                        sIntensity: { value: 0.12 }, // Reduced scanlines for performance
+                        sCount: { value: 1024 }, // Fewer scanlines for performance
+                        vignetteStrength: { value: 0.6 } // Reduced vignette for performance
+                    },
+                    vertexShader: `
+                        varying vec2 vUv;
+                        void main() {
+                            vUv = uv;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform sampler2D tDiffuse;
+                        uniform float time;
+                        uniform float nIntensity;
+                        uniform float sIntensity;
+                        uniform float sCount;
+                        uniform float vignetteStrength;
+                        varying vec2 vUv;
+                        
+                        float random(vec2 n) {
+                            return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+                        }
+                        
+                        void main() {
+                            vec4 color = texture2D(tDiffuse, vUv);
+                            
+                            // Film grain
+                            float grain = (random(vUv + time) - 0.5) * nIntensity;
+                            
+                            // Scanlines
+                            float scanline = sin(vUv.y * sCount) * sIntensity;
+                            
+                            // Color grading - MAXIMUM warmth and saturation
+                            color.rgb = mix(color.rgb, color.rgb * vec3(1.25, 1.15, 0.85), 0.6);
+                            
+                            // Apply grain and scanlines
+                            color.rgb += grain + scanline;
+                            
+                            // Vignette
+                            vec2 center = vUv - 0.5;
+                            float vignette = 1.0 - dot(center, center) * vignetteStrength;
+                            color.rgb *= vignette;
+                            
+                            // MAXIMUM contrast boost
+                            color.rgb = (color.rgb - 0.5) * 1.4 + 0.5;
+                            
+                            gl_FragColor = vec4(color.rgb, 1.0);
+                        }
+                    `
+                };
+                
+                const filmPass = new THREE.ShaderPass(filmGrainShader);
+                this.composer.addPass(filmPass);
+                
+                // FXAA for anti-aliasing
+                const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+                fxaaPass.uniforms.resolution.value.set(1 / canvas.width, 1 / canvas.height);
+                this.composer.addPass(fxaaPass);
+                
+                // Store references
+                this.filmPass = filmPass;
+                this.bloomPass = bloomPass;
+                
+                // Override the render function
+                const originalRender = renderer.render.bind(renderer);
+                renderer.render = (scene, camera) => {
+                    if (this.composer) {
+                        // Update time uniform
+                        this.filmPass.uniforms.time.value = performance.now() * 0.001;
+                        this.composer.render();
+                    } else {
+                        originalRender(scene, camera);
+                    }
+                };
+                
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    const canvas = renderer.domElement;
+                    const width = canvas.clientWidth;
+                    const height = canvas.clientHeight;
+                    
+                    renderer.setSize(width, height);
+                    this.composer.setSize(width, height);
+                    this.bloomPass.setSize(width, height);
+                    fxaaPass.uniforms.resolution.value.set(1 / width, 1 / height);
+                });
+                
+                console.log('Postprocessing setup complete!');
+            }
+        });
+
+        // Custom gradient shader for studio environment
+        AFRAME.registerShader('gradient', {
+            schema: {
+                topColor: {type: 'color', default: '#87CEEB'},
+                bottomColor: {type: 'color', default: '#E0E0E0'}
+            },
+            vertexShader: `
+                varying vec3 vWorldPosition;
+                void main() {
+                    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+                    vWorldPosition = worldPosition.xyz;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 topColor;
+                uniform vec3 bottomColor;
+                varying vec3 vWorldPosition;
+                void main() {
+                    float h = normalize(vWorldPosition).y;
+                    float mixFactor = (h + 1.0) / 2.0;
+                    gl_FragColor = vec4(mix(bottomColor, topColor, mixFactor), 1.0);
+                }
+            `
+        });
+
+        // Concentric Orbital Ribbons Component with Procedural Noise
+        AFRAME.registerComponent('orbital-ribbons', {
+            init: function () {
+                const el = this.el;
+                this.time = 0;
+                this.ribbons = [];
+                this.createOrbitalRibbons(el);
+                this.startAnimation();
+            },
+            
+            tick: function(time, timeDelta) {
+                this.time = time * 0.001; // Convert to seconds
+                
+                // Throttle updates for better performance - update every 3rd frame
+                if (!this.frameCount) this.frameCount = 0;
+                this.frameCount++;
+                
+                if (this.frameCount % 3 === 0) {
+                    this.updateRibbons();
+                }
+            },
+            
+            createOrbitalRibbons: function(el) {
+                const ribbonCount = 8; // Optimized ribbon count for 60+ FPS
+                this.mainGroup = new THREE.Group();
+                
+                for (let ribbonIndex = 0; ribbonIndex < ribbonCount; ribbonIndex++) {
+                    // Create individual group for each ribbon to animate independently
+                    const ribbonGroup = new THREE.Group();
+                    
+                    const geometry = this.createRibbonGeometry(ribbonIndex, ribbonCount, 0); // Pass time = 0 initially
+                    
+                    // Create cool color palette - blues, purples, magentas, no yellows/browns
+                    const baseHue = 0.5 + (ribbonIndex / ribbonCount) * 0.35; // Cool range: cyan to magenta
+                    const baseSaturation = 0.3 + (ribbonIndex / ribbonCount) * 0.4; // Subtle saturation variation
+                    const baseLuminance = 0.2 + (ribbonIndex / ribbonCount) * 0.5; // Wide luminance range
+                    const baseColor = new THREE.Color().setHSL(baseHue, baseSaturation, baseLuminance);
+                    
+                    const normalTexture = this.createProceduralNormalTexture();
+                    const roughnessTexture = this.createProceduralRoughnessTexture();
+                    
+                    const material = new THREE.MeshPhysicalMaterial({
+                        color: baseColor,
+                        metalness: 0.95, // 100% METALLIC
+                        roughness: 0.0, // PERFECTLY SMOOTH - mirror finish
+                        emissive: new THREE.Color(0x000000), // No emissive for pure metal
+                        emissiveIntensity: 0.0,
+                        clearcoat: 1.0, // Maximum clearcoat for perfect reflection
+                        clearcoatRoughness: 0.2, // Perfectly smooth clearcoat
+                        normalMap: null, // No normal map for perfectly smooth surface
+                        normalScale: new THREE.Vector2(1.0, 1.0),
+                        roughnessMap: null, // No roughness variation
+                        envMapIntensity: 3.0, // Maximum environment reflection
+                        transmission: 0.0,
+                        thickness: 0.0,
+                        ior: 1.5,
+                        reflectivity: 1.0, // MAXIMUM reflectivity
+                        sheen: 0.0, // No sheen needed for pure metal
+                        sheenRoughness: 0.0,
+                        sheenColor: new THREE.Color(0x000000),
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1.0
+                    });
+                    
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+                    
+                    // Performance optimizations
+                    mesh.frustumCulled = true;
+                    mesh.matrixAutoUpdate = false; // Manual matrix updates for better performance
+                    
+                    ribbonGroup.add(mesh);
+                    
+                    // Store ribbon data for animation
+                    const ribbonData = {
+                        group: ribbonGroup,
+                        mesh: mesh,
+                        geometry: geometry,
+                        material: material,
+                        index: ribbonIndex,
+                        rotationAxis: new THREE.Vector3(
+                            Math.sin(ribbonIndex * 1.7) * 0.3,
+                            1,
+                            Math.cos(ribbonIndex * 2.1) * 0.3
+                        ).normalize(),
+                        rotationSpeed: 0.1 + ribbonIndex * 0.05, // Different speeds
+                        scalePhase: ribbonIndex * Math.PI * 0.4, // Different scale phases
+                        noiseTimeOffset: ribbonIndex * 13.7, // Different noise timing
+                        baseHue: baseHue,
+                        baseSaturation: baseSaturation,
+                        baseLuminance: baseLuminance,
+                        hueSpeed: 0.005 + ribbonIndex * 0.002, // Much slower hue shifts
+                        saturationSpeed: 0.008 + ribbonIndex * 0.003, // Subtle saturation changes
+                        luminanceSpeed: 0.012 + ribbonIndex * 0.004 // More noticeable luminance changes
+                    };
+                    
+                    this.ribbons.push(ribbonData);
+                    this.mainGroup.add(ribbonGroup);
+                }
+                
+                el.setObject3D('mesh', this.mainGroup);
+            },
+            
+            createRibbonGeometry: function(ribbonIndex, ribbonCount, time) {
+                const geometry = new THREE.BufferGeometry();
+                const vertices = [];
+                const normals = [];
+                const uvs = [];
+                const indices = [];
+                const colors = [];
+                
+                const segments = 180; // Optimized circle resolution for performance
+                const rings = 40;     // Optimized width resolution for 60+ FPS
+                const baseRadius = 4 + ribbonIndex * 2.5; // Perfect ring spacing
+                const ribbonWidth = 2.8 - ribbonIndex * 0.1; // Consistent ring thickness
+                const fullCircle = Math.PI * 2; // Full 360-degree orbits
+                
+                // Unique noise seeds for each ribbon
+                const noiseSeed = ribbonIndex * 7.3;
+                const noiseScale = 0.4 + ribbonIndex * 0.15; // Reduced noise to prevent clipping
+                const timeOffset = ribbonIndex * 13.7; // Different time offsets for each ribbon
+                
+                // Generate vertices with procedural noise variations
+                for (let i = 0; i <= segments; i++) {
+                    const u = (i / segments) * fullCircle;
+                    
+                    for (let j = 0; j <= rings; j++) {
+                        const v = ((j / rings) - 0.5) * ribbonWidth;
+                        
+                        // Optimized fractal complexity - 3 layers for performance
+                        const animatedTime = time * 0.3 + timeOffset;
+                        
+                        // Primary fractal layer - main undulations
+                        const fractal1 = Math.sin(u * 2 + noiseSeed + animatedTime * 0.4) * Math.cos(u * 3 + noiseSeed * 1.2 + animatedTime * 0.2) * noiseScale;
+                        // Secondary fractal layer - medium detail
+                        const fractal2 = Math.sin(u * 5 + noiseSeed * 1.7 + animatedTime * 0.6) * Math.cos(u * 7 + noiseSeed * 2.3 + animatedTime * 0.3) * (noiseScale * 0.7);
+                        // Tertiary fractal layer - fine detail
+                        const fractal3 = Math.sin(u * 11 + noiseSeed * 2.9 + animatedTime * 0.8) * Math.cos(u * 13 + noiseSeed * 3.7 + animatedTime * 0.5) * (noiseScale * 0.4);
+                        
+                        // Interlocking rotation variations
+                        const rotationPhase = ribbonIndex * Math.PI * 0.618; // Golden ratio for natural distribution
+                        const interlockAngle = Math.sin(u * 1.5 + rotationPhase + animatedTime * 0.3) * 0.4;
+                        
+                        // Optimized fractal ribbon undulation with 3 layers
+                        const radiusNoise = baseRadius + fractal1 * 1.2 + fractal2 * 0.8 + fractal3 * 0.4;
+                        const heightNoise = (fractal1 * 0.8 + fractal2 * 1.0 + fractal3 * 0.6) * Math.sin(v * Math.PI);
+                        const widthNoise = 1 + (fractal1 * 0.2 + fractal2 * 0.3 + fractal3 * 0.15) * Math.cos(u * 2);
+                        
+                        // Interlocking orbital ribbon parametric equations
+                        const adjustedV = v * widthNoise;
+                        const rotatedU = u + interlockAngle; // Apply interlocking rotation
+                        
+                        let x = (radiusNoise + adjustedV * Math.cos(interlockAngle)) * Math.cos(rotatedU);
+                        let y = (radiusNoise + adjustedV * Math.cos(interlockAngle)) * Math.sin(rotatedU);
+                        let z = heightNoise + adjustedV * Math.sin(interlockAngle) + adjustedV * 0.2 * Math.sin(u * 1.5 + noiseSeed);
+                        
+                        // Add fine detail noise with time animation
+                        const fineNoiseScale = 0.03; // Reduced to prevent clipping
+                        x += fineNoiseScale * Math.sin(u * 25 + noiseSeed * 5 + animatedTime * 1.2) * Math.cos(v * 20);
+                        y += fineNoiseScale * Math.cos(u * 23 + noiseSeed * 5.5 + animatedTime * 1.5) * Math.sin(v * 18);
+                        z += fineNoiseScale * Math.sin(u * 30 + noiseSeed * 6 + animatedTime * 1.8) * Math.cos(v * 25);
+                        
+                        vertices.push(x, y, z);
+                        
+                        // UV mapping for texture detail
+                        const uCoord = (i / segments) * 4; // Repeat texture around orbit
+                        const vCoord = j / rings;
+                        uvs.push(uCoord, vCoord);
+                        
+                        // Color variation based on position and ribbon index
+                        const colorNoise = 0.5 + 0.5 * Math.sin(u * 6 + v * 8 + noiseSeed);
+                        const ribbonHue = ribbonIndex / ribbonCount;
+                        colors.push(
+                            0.8 + 0.2 * colorNoise + ribbonHue * 0.1,  // R
+                            0.6 + 0.3 * colorNoise + ribbonHue * 0.15, // G
+                            0.5 + 0.2 * colorNoise + ribbonHue * 0.05  // B
+                        );
+                    }
+                }
+                
+                // Calculate smooth normals
+                for (let i = 0; i < vertices.length; i += 3) {
+                    const idx = i / 3;
+                    const ring = idx % (rings + 1);
+                    const segment = Math.floor(idx / (rings + 1));
+                    
+                    let normal = new THREE.Vector3();
+                    
+                    if (segment > 0 && segment < segments && ring > 0 && ring < rings) {
+                        // Calculate normal from neighboring vertices
+                        const current = new THREE.Vector3(vertices[i], vertices[i + 1], vertices[i + 2]);
+                        const neighbor1 = new THREE.Vector3(
+                            vertices[i - (rings + 1) * 3] || vertices[i],
+                            vertices[i - (rings + 1) * 3 + 1] || vertices[i + 1],
+                            vertices[i - (rings + 1) * 3 + 2] || vertices[i + 2]
+                        );
+                        const neighbor2 = new THREE.Vector3(
+                            vertices[i - 3] || vertices[i],
+                            vertices[i - 2] || vertices[i + 1],
+                            vertices[i - 1] || vertices[i + 2]
+                        );
+                        
+                        const v1 = neighbor1.clone().sub(current);
+                        const v2 = neighbor2.clone().sub(current);
+                        normal = v1.cross(v2).normalize();
+                    } else {
+                        // Fallback normal
+                        normal = new THREE.Vector3(vertices[i], vertices[i + 1], vertices[i + 2]).normalize();
+                    }
+                    
+                    normals.push(normal.x, normal.y, normal.z);
+                }
+                
+                // Generate triangle indices
+                for (let i = 0; i < segments; i++) {
+                    for (let j = 0; j < rings; j++) {
+                        const a = i * (rings + 1) + j;
+                        const b = a + rings + 1;
+                        const c = a + 1;
+                        const d = b + 1;
+                        
+                        indices.push(a, b, c);
+                        indices.push(c, b, d);
+                    }
+                }
+                
+                geometry.setIndex(indices);
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+                geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                
+                // Compute smooth normals for perfect metallic reflection
+                geometry.computeVertexNormals();
+                geometry.normalizeNormals();
+                geometry.computeTangents();
+                
+                return geometry;
+            },
+            
+            startAnimation: function() {
+                // Remove the default rotation animation since we're doing custom animations
+                this.el.removeAttribute('animation');
+            },
+            
+            updateRibbons: function() {
+                if (!this.ribbons || this.ribbons.length === 0) return;
+                
+                this.ribbons.forEach((ribbonData, index) => {
+                    // Update orbital rotation on different axes
+                    const rotationAmount = this.time * ribbonData.rotationSpeed;
+                    ribbonData.group.setRotationFromAxisAngle(ribbonData.rotationAxis, rotationAmount);
+                    
+                    // Update subtle scaling animation
+                    const scaleAnimation = 1 + Math.sin(this.time * 0.8 + ribbonData.scalePhase) * 0.03; // 3% scale variation
+                    ribbonData.group.scale.set(scaleAnimation, scaleAnimation, scaleAnimation);
+                    
+                    // Manually update matrix for performance
+                    ribbonData.group.updateMatrix();
+                    ribbonData.mesh.updateMatrix();
+                    
+                    // Update subtle HSV color shifting focused on luminance and saturation
+                    const currentHue = ribbonData.baseHue + Math.sin(this.time * ribbonData.hueSpeed) * 0.05; // Tiny hue oscillation
+                    const currentSaturation = ribbonData.baseSaturation + Math.sin(this.time * ribbonData.saturationSpeed) * 0.15; // Subtle saturation breathing
+                    const currentLuminance = ribbonData.baseLuminance + Math.sin(this.time * ribbonData.luminanceSpeed) * 0.25; // More dramatic luminance changes
+                    
+                    const newColor = new THREE.Color().setHSL(currentHue, Math.max(0.1, currentSaturation), Math.max(0.1, Math.min(0.9, currentLuminance)));
+                    ribbonData.material.color = newColor;
+                    ribbonData.material.emissive.setHSL(currentHue, Math.max(0.1, currentSaturation * 0.6), Math.max(0.01, currentLuminance * 0.08));
+                    ribbonData.material.sheenColor = newColor.clone().multiplyScalar(0.7);
+                    
+                    // Update geometry with smooth animated noise continuously
+                    this.updateRibbonGeometrySmooth(ribbonData, index);
+                });
+            },
+            
+            updateRibbonGeometrySmooth: function(ribbonData, ribbonIndex) {
+                // Update vertex positions directly for smooth animation
+                const geometry = ribbonData.geometry;
+                const positions = geometry.attributes.position.array;
+                const colors = geometry.attributes.color.array;
+                
+                const segments = 180;
+                const rings = 40;
+                const baseRadius = 4 + ribbonIndex * 2.5;
+                const ribbonWidth = 2.8 - ribbonIndex * 0.1;
+                const fullCircle = Math.PI * 2;
+                
+                const noiseSeed = ribbonIndex * 7.3;
+                const noiseScale = 0.4 + ribbonIndex * 0.15;
+                const timeOffset = ribbonIndex * 13.7;
+                
+                let vertexIndex = 0;
+                
+                for (let i = 0; i <= segments; i++) {
+                    const u = (i / segments) * fullCircle;
+                    
+                    for (let j = 0; j <= rings; j++) {
+                        const v = ((j / rings) - 0.5) * ribbonWidth;
+                        
+                        // Optimized fractal complexity - 3 layers for performance
+                        const animatedTime = this.time * 0.3 + timeOffset;
+                        
+                        // Primary fractal layer - main undulations
+                        const fractal1 = Math.sin(u * 2 + noiseSeed + animatedTime * 0.4) * Math.cos(u * 3 + noiseSeed * 1.2 + animatedTime * 0.2) * noiseScale;
+                        // Secondary fractal layer - medium detail
+                        const fractal2 = Math.sin(u * 5 + noiseSeed * 1.7 + animatedTime * 0.6) * Math.cos(u * 7 + noiseSeed * 2.3 + animatedTime * 0.3) * (noiseScale * 0.7);
+                        // Tertiary fractal layer - fine detail
+                        const fractal3 = Math.sin(u * 11 + noiseSeed * 2.9 + animatedTime * 0.8) * Math.cos(u * 13 + noiseSeed * 3.7 + animatedTime * 0.5) * (noiseScale * 0.4);
+                        
+                        // Interlocking rotation variations
+                        const rotationPhase = ribbonIndex * Math.PI * 0.618; // Golden ratio for natural distribution
+                        const interlockAngle = Math.sin(u * 1.5 + rotationPhase + animatedTime * 0.3) * 0.4;
+                        
+                        // Optimized fractal ribbon undulation with 3 layers
+                        const radiusNoise = baseRadius + fractal1 * 1.2 + fractal2 * 0.8 + fractal3 * 0.4;
+                        const heightNoise = (fractal1 * 0.8 + fractal2 * 1.0 + fractal3 * 0.6) * Math.sin(v * Math.PI);
+                        const widthNoise = 1 + (fractal1 * 0.2 + fractal2 * 0.3 + fractal3 * 0.15) * Math.cos(u * 2);
+                        
+                        // Interlocking orbital ribbon parametric equations
+                        const adjustedV = v * widthNoise;
+                        const rotatedU = u + interlockAngle; // Apply interlocking rotation
+                        
+                        let x = (radiusNoise + adjustedV * Math.cos(interlockAngle)) * Math.cos(rotatedU);
+                        let y = (radiusNoise + adjustedV * Math.cos(interlockAngle)) * Math.sin(rotatedU);
+                        let z = heightNoise + adjustedV * Math.sin(interlockAngle) + adjustedV * 0.2 * Math.sin(u * 1.5 + noiseSeed);
+                        
+                        // Fine detail noise
+                        const fineNoiseScale = 0.03;
+                        x += fineNoiseScale * Math.sin(u * 25 + noiseSeed * 5 + animatedTime * 1.2) * Math.cos(v * 20);
+                        y += fineNoiseScale * Math.cos(u * 23 + noiseSeed * 5.5 + animatedTime * 1.5) * Math.sin(v * 18);
+                        z += fineNoiseScale * Math.sin(u * 30 + noiseSeed * 6 + animatedTime * 1.8) * Math.cos(v * 25);
+                        
+                        // Update positions
+                        positions[vertexIndex * 3] = x;
+                        positions[vertexIndex * 3 + 1] = y;
+                        positions[vertexIndex * 3 + 2] = z;
+                        
+                        // Update colors with smooth animation
+                        const colorNoise = 0.5 + 0.5 * Math.sin(u * 6 + v * 8 + noiseSeed + animatedTime * 0.5);
+                        const ribbonHue = ribbonIndex / this.ribbons.length;
+                        colors[vertexIndex * 3] = 0.8 + 0.2 * colorNoise + ribbonHue * 0.1;
+                        colors[vertexIndex * 3 + 1] = 0.6 + 0.3 * colorNoise + ribbonHue * 0.15;
+                        colors[vertexIndex * 3 + 2] = 0.5 + 0.2 * colorNoise + ribbonHue * 0.05;
+                        
+                        vertexIndex++;
+                    }
+                }
+                
+                // Mark attributes as needing update
+                geometry.attributes.position.needsUpdate = true;
+                geometry.attributes.color.needsUpdate = true;
+                // Recalculate smooth normals for perfect metallic reflection
+                geometry.computeVertexNormals();
+                geometry.normalizeNormals();
+            },
+            
+            createProceduralNormalTexture: function() {
+                const size = 512;
+                const data = new Uint8Array(size * size * 4);
+                
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        const idx = (i * size + j) * 4;
+                        const x = i / size;
+                        const y = j / size;
+                        
+                        // Generate procedural normal map with multiple octaves
+                        const noise1 = Math.sin(x * 20) * Math.cos(y * 20) * 0.5;
+                        const noise2 = Math.sin(x * 50) * Math.cos(y * 50) * 0.3;
+                        const noise3 = Math.sin(x * 100) * Math.cos(y * 100) * 0.2;
+                        
+                        const normalX = (noise1 + noise2 + noise3) * 0.5 + 0.5;
+                        const normalY = (Math.cos(x * 30) * Math.sin(y * 30) * 0.4 + 0.5);
+                        const normalZ = 0.8; // Keep mostly pointing up
+                        
+                        data[idx] = Math.floor(normalX * 255);     // R
+                        data[idx + 1] = Math.floor(normalY * 255); // G
+                        data[idx + 2] = Math.floor(normalZ * 255); // B
+                        data[idx + 3] = 255; // A
+                    }
+                }
+                
+                const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.needsUpdate = true;
+                
+                return texture;
+            },
+            
+            createProceduralRoughnessTexture: function() {
+                const size = 256;
+                const data = new Uint8Array(size * size);
+                
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        const idx = i * size + j;
+                        const x = i / size;
+                        const y = j / size;
+                        
+                        // Create varied roughness pattern
+                        const roughness = 0.1 + 0.3 * (
+                            Math.sin(x * 10) * Math.cos(y * 10) * 0.5 + 0.5 +
+                            Math.sin(x * 25) * Math.cos(y * 25) * 0.3 + 0.3
+                        );
+                        
+                        data[idx] = Math.floor(Math.min(1, Math.max(0, roughness)) * 255);
+                    }
+                }
+                
+                const texture = new THREE.DataTexture(data, size, size, THREE.RedFormat);
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.needsUpdate = true;
+                
+                return texture;
+            }
+        });
+        
+        // Mouse and touch controls for manual rotation and zoom
+        AFRAME.registerComponent('drag-rotate', {
+            init: function() {
+                this.isDragging = false;
+                this.previousMousePosition = { x: 0, y: 0 };
+                this.rotation = { x: 0, y: 0 };
+                this.zoom = 0; // Initial camera distance (inside the geometry)
+                this.minZoom = -5;
+                this.maxZoom = 10;
+                
+                this.onMouseDown = this.onMouseDown.bind(this);
+                this.onMouseMove = this.onMouseMove.bind(this);
+                this.onMouseUp = this.onMouseUp.bind(this);
+                this.onMouseWheel = this.onMouseWheel.bind(this);
+                this.onTouchStart = this.onTouchStart.bind(this);
+                this.onTouchMove = this.onTouchMove.bind(this);
+                this.onTouchEnd = this.onTouchEnd.bind(this);
+                
+                this.el.sceneEl.addEventListener('mousedown', this.onMouseDown);
+                this.el.sceneEl.addEventListener('mousemove', this.onMouseMove);
+                this.el.sceneEl.addEventListener('mouseup', this.onMouseUp);
+                this.el.sceneEl.addEventListener('wheel', this.onMouseWheel, { passive: false });
+                this.el.sceneEl.addEventListener('touchstart', this.onTouchStart);
+                this.el.sceneEl.addEventListener('touchmove', this.onTouchMove);
+                this.el.sceneEl.addEventListener('touchend', this.onTouchEnd);
+            },
+            
+            onMouseDown: function(event) {
+                this.isDragging = true;
+                this.previousMousePosition = { x: event.clientX, y: event.clientY };
+                // Pause automatic rotation
+                document.querySelector('#orbital-ribbons').removeAttribute('animation');
+            },
+            
+            onMouseMove: function(event) {
+                if (!this.isDragging) return;
+                
+                const deltaX = event.clientX - this.previousMousePosition.x;
+                const deltaY = event.clientY - this.previousMousePosition.y;
+                
+                this.rotation.y += deltaX * 0.5;
+                this.rotation.x += deltaY * 0.5;
+                
+                const container = document.querySelector('#mobius-container');
+                container.setAttribute('rotation', `${this.rotation.x} ${this.rotation.y} 0`);
+                
+                this.previousMousePosition = { x: event.clientX, y: event.clientY };
+            },
+            
+            onMouseUp: function() {
+                this.isDragging = false;
+            },
+            
+            onMouseWheel: function(event) {
+                event.preventDefault();
+                
+                const delta = event.deltaY;
+                const zoomSpeed = 0.001;
+                
+                // Zoom in/out based on wheel direction
+                this.zoom += delta * zoomSpeed;
+                this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom));
+                
+                // Update camera position
+                const camera = document.querySelector('#main-camera');
+                camera.setAttribute('position', `0 0 ${this.zoom}`);
+            },
+            
+            onTouchStart: function(event) {
+                if (event.touches.length === 1) {
+                    this.isDragging = true;
+                    this.previousMousePosition = { 
+                        x: event.touches[0].clientX, 
+                        y: event.touches[0].clientY 
+                    };
+                    document.querySelector('#orbital-ribbons').removeAttribute('animation');
+                } else if (event.touches.length === 2) {
+                    // Pinch to zoom
+                    this.isDragging = false;
+                    this.initialPinchDistance = this.getPinchDistance(event.touches);
+                    this.initialZoom = this.zoom;
+                }
+            },
+            
+            onTouchMove: function(event) {
+                event.preventDefault();
+                
+                if (event.touches.length === 1 && this.isDragging) {
+                    // Single finger drag to rotate
+                    const deltaX = event.touches[0].clientX - this.previousMousePosition.x;
+                    const deltaY = event.touches[0].clientY - this.previousMousePosition.y;
+                    
+                    this.rotation.y += deltaX * 0.5;
+                    this.rotation.x += deltaY * 0.5;
+                    
+                    const container = document.querySelector('#mobius-container');
+                    container.setAttribute('rotation', `${this.rotation.x} ${this.rotation.y} 0`);
+                    
+                    this.previousMousePosition = { 
+                        x: event.touches[0].clientX, 
+                        y: event.touches[0].clientY 
+                    };
+                } else if (event.touches.length === 2) {
+                    // Two finger pinch to zoom
+                    const currentPinchDistance = this.getPinchDistance(event.touches);
+                    const pinchRatio = currentPinchDistance / this.initialPinchDistance;
+                    
+                    this.zoom = this.initialZoom / pinchRatio;
+                    this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom));
+                    
+                    const camera = document.querySelector('#main-camera');
+                    camera.setAttribute('position', `0 0 ${this.zoom}`);
+                }
+            },
+            
+            onTouchEnd: function() {
+                this.isDragging = false;
+            },
+            
+            getPinchDistance: function(touches) {
+                const dx = touches[0].clientX - touches[1].clientX;
+                const dy = touches[0].clientY - touches[1].clientY;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+        });
+        
+        // Initialize drag controls and ambient music
+        document.addEventListener('DOMContentLoaded', function() {
+            const scene = document.querySelector('#main-scene');
+            scene.setAttribute('drag-rotate', '');
+            
+            // Initialize ambient music on first user interaction
+            let musicInitialized = false;
+            const initMusic = async () => {
+                if (musicInitialized) return;
+                musicInitialized = true;
+                
+                await ambientMusic.init();
+                ambientMusic.start();
+                
+                // Remove event listeners after first interaction
+                document.removeEventListener('click', initMusic);
+                document.removeEventListener('keydown', initMusic);
+                document.removeEventListener('touchstart', initMusic);
+            };
+            
+            document.addEventListener('click', initMusic);
+            document.addEventListener('keydown', initMusic);
+            document.addEventListener('touchstart', initMusic);
+        });
+    </script>
+</body>
+</html>
