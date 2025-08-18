@@ -4,6 +4,12 @@ I'm [Cameron](https://github.com/camb416) and these are my vibe coded experiment
 
 As I work on these, I'm developing [vibe coding practices](doc/vibe-coding-practices.md) that inform my approach to this type of software work.
 
+## [Endless Curves](endlessCurves/)
+Last updated: 08/18/2025
+![endlessCurves screen record](endlessCurves/screenrecord_v3.gif)
+- Generates an interactive animation of undulating ribbons with an ambient MIDI track in A-Frame
+- On [Youtube](https://www.youtube.com/watch?v=6hhGwrPVzt0)
+
 ## [Swiss Poster Generator](swiss-poster-generator/index.html)
 Last updated: 07/15/2025
 ![Swiss Poster Generator Screenshot](swiss-poster-generator/screenshot.jpg)
